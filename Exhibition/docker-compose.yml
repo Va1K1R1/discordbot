@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  discord-bot:
+    build: .
+    container_name: ai-discord-bot
+    restart: unless-stopped
+    environment:
+      # MySQL 연결 정보
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=bot_user
+      - MYSQL_PASSWORD=bot_password
+      - MYSQL_DATABASE=discord_bot
+      # 또는 전체 DATABASE_URL로 설정
+      - DATABASE_URL=mysql+pymysql://bot_user:bot_password@mysql:3306/discord_bot?charset=utf8mb4
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+      # .env 파일을 마운트 (빌드 시 복사 대신 런타임에 마운트)
+      - ./.env:/app/.env:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bot-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  mysql:
+    image: mysql:8.0
+    container_name: bot-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: discord_bot
+      MYSQL_USER: bot_user
+      MYSQL_PASSWORD: bot_password
+      # MySQL 8.0 호환성을 위한 설정
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--default-authentication-plugin=mysql_native_password'
+    ]
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3307:3306"  # 개발용 포트 노출 (프로덕션에서는 제거)
+    networks:
+      - bot-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "bot_user", "-pbot_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # 선택사항: phpMyAdmin (데이터베이스 관리용)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: bot-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - bot-network
+    profiles:
+      - debug  # docker-compose --profile debug up으로만 실행
+
+volumes:
+  mysql_data:
+
+networks:
+  bot-network:
+    driver: bridge

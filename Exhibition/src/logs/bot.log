@@ -1,0 +1,74 @@
+2025-06-24 11:05:15,689 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-24 11:05:15,690 - root - CRITICAL - ¿¹±âÄ¡ ¾ÊÀº ¿À·ù·Î º¿ÀÌ Á¾·áµÇ¾ú½À´Ï´Ù: [WinError 3] The system cannot find the path specified: 'src\\commands'
+2025-06-24 11:07:05,136 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-24 11:07:05,682 - src.commands.admin - INFO - AdminCog ·Îµå ¿Ï·á
+2025-06-24 11:07:05,682 - root - INFO - È®Àå ¸ğµâ ·Îµå: src.commands.admin
+2025-06-24 11:07:05,689 - src.commands.ai_chat - INFO - AIChatCog ·Îµå ¿Ï·á
+2025-06-24 11:07:05,689 - root - INFO - È®Àå ¸ğµâ ·Îµå: src.commands.ai_chat
+2025-06-24 11:07:05,693 - src.commands.dynamic - INFO - DynamicCommandsCog ·Îµå ¿Ï·á
+2025-06-24 11:07:05,694 - root - INFO - È®Àå ¸ğµâ ·Îµå: src.commands.dynamic
+2025-06-24 11:07:05,694 - root - INFO - º¿ ½ÃÀÛ Áß...
+2025-06-24 11:07:09,036 - src.services.command_service - ERROR - ¸ğµç Ä¿¸Çµå Á¶È¸ ½ÇÆĞ: (sqlite3.OperationalError) no such table: commands
+[SQL: SELECT commands.id AS commands_id, commands.guild_id AS commands_guild_id, commands.name AS commands_name, commands.description AS commands_description, commands.response_template AS commands_response_template, commands.use_ai AS commands_use_ai, commands.ai_prompt AS commands_ai_prompt, commands.ai_system_message AS commands_ai_system_message, commands.required_permissions AS commands_required_permissions, commands.allowed_roles AS commands_allowed_roles, commands.created_by AS commands_created_by, commands.created_at AS commands_created_at, commands.updated_at AS commands_updated_at, commands.is_active AS commands_is_active, commands.usage_count AS commands_usage_count, commands.last_used AS commands_last_used 
+FROM commands 
+WHERE commands.guild_id = ? AND commands.is_active = 1]
+[parameters: ('1384162202600341647',)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-24 11:07:09,037 - src.commands.dynamic - ERROR - ±âÁ¸ Ä¿¸Çµå ·Îµå ½ÇÆĞ: Ä¿¸Çµå ¸ñ·Ï Á¶È¸ Áß ¿À·ù ¹ß»ı: (sqlite3.OperationalError) no such table: commands
+[SQL: SELECT commands.id AS commands_id, commands.guild_id AS commands_guild_id, commands.name AS commands_name, commands.description AS commands_description, commands.response_template AS commands_response_template, commands.use_ai AS commands_use_ai, commands.ai_prompt AS commands_ai_prompt, commands.ai_system_message AS commands_ai_system_message, commands.required_permissions AS commands_required_permissions, commands.allowed_roles AS commands_allowed_roles, commands.created_by AS commands_created_by, commands.created_at AS commands_created_at, commands.updated_at AS commands_updated_at, commands.is_active AS commands_is_active, commands.usage_count AS commands_usage_count, commands.last_used AS commands_last_used 
+FROM commands 
+WHERE commands.guild_id = ? AND commands.is_active = 1]
+[parameters: ('1384162202600341647',)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-24 11:18:48,029 - root - INFO - º¿ÀÌ Á¾·áµÇ¾ú½À´Ï´Ù.
+2025-06-24 11:18:48,031 - root - INFO - Å°º¸µå ÀÎÅÍ·´Æ®·Î º¿ÀÌ Á¾·áµÇ¾ú½À´Ï´Ù.
+2025-06-24 11:18:51,460 - root - INFO - µ¥ÀÌÅÍº£ÀÌ½º ÃÊ±âÈ­ Áß...
+2025-06-24 11:18:51,482 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-24 11:18:51,993 - src.commands.admin - INFO - AdminCog ·Îµå ¿Ï·á
+2025-06-24 11:18:51,994 - root - INFO - È®Àå ¸ğµâ ·Îµå: src.commands.admin
+2025-06-24 11:18:51,997 - src.commands.ai_chat - INFO - AIChatCog ·Îµå ¿Ï·á
+2025-06-24 11:18:51,997 - root - INFO - È®Àå ¸ğµâ ·Îµå: src.commands.ai_chat
+2025-06-24 11:18:51,999 - src.commands.dynamic - INFO - DynamicCommandsCog ·Îµå ¿Ï·á
+2025-06-24 11:18:51,999 - root - INFO - È®Àå ¸ğµâ ·Îµå: src.commands.dynamic
+2025-06-24 11:18:51,999 - root - INFO - º¿ ½ÃÀÛ Áß...
+2025-06-24 11:18:55,416 - src.services.command_service - ERROR - ¸ğµç Ä¿¸Çµå Á¶È¸ ½ÇÆĞ: (pymysql.err.ProgrammingError) (1146, "Table 'discord_bot.commands' doesn't exist")
+[SQL: SELECT commands.id AS commands_id, commands.guild_id AS commands_guild_id, commands.name AS commands_name, commands.description AS commands_description, commands.response_template AS commands_response_template, commands.use_ai AS commands_use_ai, commands.ai_prompt AS commands_ai_prompt, commands.ai_system_message AS commands_ai_system_message, commands.required_permissions AS commands_required_permissions, commands.allowed_roles AS commands_allowed_roles, commands.created_by AS commands_created_by, commands.created_at AS commands_created_at, commands.updated_at AS commands_updated_at, commands.is_active AS commands_is_active, commands.usage_count AS commands_usage_count, commands.last_used AS commands_last_used 
+FROM commands 
+WHERE commands.guild_id = %(guild_id_1)s AND commands.is_active = true]
+[parameters: {'guild_id_1': '1384162202600341647'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-06-24 11:18:55,417 - src.commands.dynamic - ERROR - ±âÁ¸ Ä¿¸Çµå ·Îµå ½ÇÆĞ: Ä¿¸Çµå ¸ñ·Ï Á¶È¸ Áß ¿À·ù ¹ß»ı: (pymysql.err.ProgrammingError) (1146, "Table 'discord_bot.commands' doesn't exist")
+[SQL: SELECT commands.id AS commands_id, commands.guild_id AS commands_guild_id, commands.name AS commands_name, commands.description AS commands_description, commands.response_template AS commands_response_template, commands.use_ai AS commands_use_ai, commands.ai_prompt AS commands_ai_prompt, commands.ai_system_message AS commands_ai_system_message, commands.required_permissions AS commands_required_permissions, commands.allowed_roles AS commands_allowed_roles, commands.created_by AS commands_created_by, commands.created_at AS commands_created_at, commands.updated_at AS commands_updated_at, commands.is_active AS commands_is_active, commands.usage_count AS commands_usage_count, commands.last_used AS commands_last_used 
+FROM commands 
+WHERE commands.guild_id = %(guild_id_1)s AND commands.is_active = true]
+[parameters: {'guild_id_1': '1384162202600341647'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-06-24 11:35:59,370 - root - INFO - º¿ÀÌ Á¾·áµÇ¾ú½À´Ï´Ù.
+2025-06-24 11:35:59,372 - root - INFO - Å°º¸µå ÀÎÅÍ·´Æ®·Î º¿ÀÌ Á¾·áµÇ¾ú½À´Ï´Ù.
+2025-06-24 11:38:16 - root - INFO - ë°ì´í„°ë² ì´ìŠ¤ ì´ˆê¸°í™” ì¤‘...
+2025-06-24 11:38:16 - src.models.database - INFO - ë°ì´í„°ë² ì´ìŠ¤ 'discord_bot' ì´ë¯¸ ì¡´ì¬
+2025-06-24 11:38:16 - src.models.database - INFO - MySQL ë°ì´í„°ë² ì´ìŠ¤ ì—°ê²° ì„±ê³µ
+2025-06-24 11:38:16 - src.models.database - INFO - ê¸°ì¡´ í…Œì´ë¸”: []
+2025-06-24 11:38:16 - src.models.database - ERROR - ë°ì´í„°ë² ì´ìŠ¤ ì´ˆê¸°í™” ì‹¤íŒ¨: (in table 'commands', column 'guild_id'): VARCHAR requires a length on dialect mysql
+2025-06-24 11:38:16 - root - ERROR - ë°ì´í„°ë² ì´ìŠ¤ ì´ˆê¸°í™” ì‹¤íŒ¨
+2025-06-24 11:40:52 - root - INFO - ë°ì´í„°ë² ì´ìŠ¤ ì´ˆê¸°í™” ì¤‘...
+2025-06-24 11:40:52 - src.models.database - INFO - ë°ì´í„°ë² ì´ìŠ¤ 'discord_bot' ì´ë¯¸ ì¡´ì¬
+2025-06-24 11:40:52 - src.models.database - INFO - MySQL ë°ì´í„°ë² ì´ìŠ¤ ì—°ê²° ì„±ê³µ
+2025-06-24 11:40:52 - src.models.database - INFO - ê¸°ì¡´ í…Œì´ë¸”: []
+2025-06-24 11:40:52 - src.models.database - INFO - ë°ì´í„°ë² ì´ìŠ¤ í…Œì´ë¸” ìƒì„± ì™„ë£Œ
+2025-06-24 11:40:52 - src.models.database - INFO - ìƒì„±ëœ í…Œì´ë¸”: ['commands', 'conversation_history', 'users']
+2025-06-24 11:40:52 - root - INFO - ë°ì´í„°ë² ì´ìŠ¤ ì´ˆê¸°í™” ì™„ë£Œ
+2025-06-24 11:40:52 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-24 11:40:52 - root - INFO - í˜„ì¬ íŒŒì¼: D:\Exhibition\src\main.py
+2025-06-24 11:40:52 - root - INFO - í”„ë¡œì íŠ¸ ë£¨íŠ¸: D:\Exhibition
+2025-06-24 11:40:52 - root - INFO - Commands ë””ë ‰í† ë¦¬: D:\Exhibition\src\commands
+2025-06-24 11:40:52 - root - INFO - Commands ë””ë ‰í† ë¦¬ ì¡´ì¬ ì—¬ë¶€: True
+2025-06-24 11:40:53 - root - ERROR - í™•ì¥ ëª¨ë“ˆ ë¡œë“œ ì‹¤íŒ¨ src.commands.admin: Extension 'src.commands.admin' raised an error: ImportError: cannot import name 'validate_permissions' from 'src.utils.validators' (D:\Exhibition\src\utils\validators.py)
+2025-06-24 11:40:53 - src.commands.ai_chat - INFO - AIChatCog ë¡œë“œ ì™„ë£Œ
+2025-06-24 11:40:53 - root - INFO - í™•ì¥ ëª¨ë“ˆ ë¡œë“œ: src.commands.ai_chat
+2025-06-24 11:40:53 - src.commands.dynamic - INFO - DynamicCommandsCog ë¡œë“œ ì™„ë£Œ
+2025-06-24 11:40:53 - root - INFO - í™•ì¥ ëª¨ë“ˆ ë¡œë“œ: src.commands.dynamic
+2025-06-24 11:40:53 - root - INFO - ë´‡ ì‹œì‘ ì¤‘...
+2025-06-24 11:40:56 - src.commands.dynamic - INFO - ê¸¸ë“œ I.Vë‹˜ì˜ ì„œë²„(1384162202600341647)ì˜ ê¸°ì¡´ ì»¤ë§¨ë“œ 0ê°œ ë¡œë“œ ì™„ë£Œ
+2025-06-24 11:41:15 - root - INFO - ë´‡ì´ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.
+2025-06-24 11:41:15 - root - INFO - í‚¤ë³´ë“œ ì¸í„°ëŸ½íŠ¸ë¡œ ë´‡ì´ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.
