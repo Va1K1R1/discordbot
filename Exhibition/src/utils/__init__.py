@@ -16,7 +16,8 @@ from .validators import (
     validate_user_input,
     sanitize_user_input,
     validate_command_name,
-    validate_permissions
+    validate_command_description,
+    validate_discord_id
 )
 
 __all__ = [
@@ -31,5 +32,6 @@ __all__ = [
     'validate_user_input',
     'sanitize_user_input',
     'validate_command_name',
-    'validate_permissions'
+    'validate_command_description',
+    'validate_discord_id'
 ]

@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     # MySQL 데이터베이스 설정
     mysql_host: str = "localhost"
     mysql_port: int = 3306
-    mysql_user: str = "root"
-    mysql_password: str = "root"
+    mysql_user: str = "j"
+    mysql_password: str = "4820"
     mysql_database: str = "discord_bot"
     
     # 로깅 설정

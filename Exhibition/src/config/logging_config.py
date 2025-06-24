@@ -39,7 +39,7 @@ def setup_logging():
     # 파일 핸들러 (회전 로그)
     file_handler = logging.handlers.RotatingFileHandler(
         log_dir / "bot.log",
-        maxBytes=10*1024*1024,  # 10MB
+        maxBytes=100*1024*1024,  # 10MB
         backupCount=5,
         encoding='utf-8'
     )

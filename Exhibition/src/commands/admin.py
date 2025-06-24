@@ -3,8 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import logging
 from typing import Optional, List
-
-from src.services.permission_service import check_admin_permission
+from src.services.permission_service import check_admin_permission, check_role_permission
 from src.services.command_service import command_service
 from src.utils.helpers import create_embed
 from src.exceptions.custom_exceptions import (
