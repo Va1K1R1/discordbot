@@ -107,3 +107,24 @@ def sanitize_user_input(user_input: str) -> str:
     sanitized = sanitized.replace('>', '\\>')
     
     return sanitized
+
+def validate_permissions(permissions: List[str]) -> bool:
+    """권한 유효성 검사"""
+    valid_permissions = [
+        'administrator', 'manage_guild', 'manage_roles', 'manage_channels',
+        'kick_members', 'ban_members', 'create_instant_invite', 'change_nickname',
+        'manage_nicknames', 'manage_emojis', 'manage_webhooks', 'read_messages',
+        'send_messages', 'send_tts_messages', 'manage_messages', 'embed_links',
+        'attach_files', 'read_message_history', 'mention_everyone', 'use_external_emojis',
+        'add_reactions', 'connect', 'speak', 'mute_members', 'deafen_members',
+        'move_members', 'use_voice_activation'
+    ]
+
+    if not isinstance(permissions, list):
+        return False
+    
+    for permission in permissions:
+        if permission not in valid_permissions:
+            return False
+    
+    return True

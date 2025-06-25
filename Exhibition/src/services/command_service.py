@@ -1,345 +1,216 @@
-import discord
-from discord import app_commands
-from sqlalchemy.orm import Session
-from typing import List, Dict, Any, Optional, Tuple
-import logging
-import json
+# MySQL 최적화된 안전한 DB 세션 관리
 
+import logging
+from contextlib import contextmanager
+from typing import List, Optional
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError, OperationalError
 from src.models.database import get_db
 from src.models.command import Command
-from src.services.ai_service import ai_service
-from src.utils.validators import validate_command_name, validate_command_description
 from src.exceptions.custom_exceptions import (
     CommandNotFoundError,
     CommandAlreadyExistsError,
-    ValidationError,
     DatabaseError
 )
 
 logger = logging.getLogger(__name__)
 
-
 class CommandService:
-    """커맨드 관리 서비스"""
+    """MySQL 최적화된 안전한 명령어 서비스"""
     
-    @staticmethod
+    @contextmanager
+    def get_db_session(self):
+        """MySQL용 안전한 DB 세션 컨텍스트 매니저"""
+        db = next(get_db())
+        try:
+            yield db
+            db.commit()  # MySQL 트랜잭션 커밋
+        except IntegrityError as e:
+            db.rollback()
+            logger.error(f"MySQL 무결성 제약 위반: {e}")
+            if "Duplicate entry" in str(e):
+                raise CommandAlreadyExistsError("명령어가 이미 존재합니다.")
+            raise DatabaseError(f"데이터 무결성 오류: {str(e)}")
+        except OperationalError as e:
+            db.rollback()
+            logger.error(f"MySQL 연결 오류: {e}")
+            raise DatabaseError(f"데이터베이스 연결 오류: {str(e)}")
+        except SQLAlchemyError as e:
+            db.rollback()
+            logger.error(f"MySQL DB 오류: {e}")
+            raise DatabaseError(f"데이터베이스 오류: {str(e)}")
+        except Exception as e:
+            db.rollback()
+            logger.error(f"예상치 못한 오류: {e}")
+            raise
+        finally:
+            db.close()  # 🔥 MySQL 연결 해제 - 중요!
+    
     async def create_command(
+        self,
         guild_id: str,
         name: str,
         description: str,
         response_template: str,
-        created_by: str,
+        created_by: int,
         use_ai: bool = False,
-        ai_prompt: Optional[str] = None,
-        ai_system_message: Optional[str] = None,
         allowed_roles: Optional[List[str]] = None
     ) -> Command:
-        """
-        새 커맨드 생성
-        
-        Args:
-            guild_id: 길드 ID
-            name: 커맨드 이름
-            description: 커맨드 설명
-            response_template: 응답 템플릿
-            created_by: 생성자 ID
-            use_ai: AI 사용 여부
-            ai_prompt: AI 프롬프트
-            ai_system_message: AI 시스템 메시지
-            allowed_roles: 허용된 역할 목록
-            
-        Returns:
-            생성된 커맨드 객체
-            
-        Raises:
-            ValidationError: 유효성 검사 실패 시
-            CommandAlreadyExistsError: 커맨드가 이미 존재할 경우
-            DatabaseError: 데이터베이스 오류 발생 시
-        """
-        # 유효성 검사
-        is_valid, error_message = validate_command_name(name)
-        if not is_valid:
-            raise ValidationError(error_message)
-        
-        is_valid, error_message = validate_command_description(description)
-        if not is_valid:
-            raise ValidationError(error_message)
-        
+        """MySQL 최적화된 안전한 명령어 생성"""
         try:
-            db = next(get_db())
-            
-            # 커맨드 중복 확인
-            existing_command = db.query(Command).filter(
-                Command.guild_id == guild_id,
-                Command.name == name
-            ).first()
-            
-            if existing_command:
-                raise CommandAlreadyExistsError(name)
-            
-            # 새 커맨드 생성
-            new_command = Command(
-                guild_id=guild_id,
-                name=name,
-                description=description,
-                response_template=response_template,
-                created_by=created_by,
-                use_ai=use_ai,
-                ai_prompt=ai_prompt,
-                ai_system_message=ai_system_message
-            )
-            
-            # 허용된 역할 설정
-            if allowed_roles:
-                new_command.set_allowed_roles(allowed_roles)
-            
-            db.add(new_command)
-            db.commit()
-            db.refresh(new_command)
-            
-            logger.info(f"커맨드 생성 성공: {name} (길드: {guild_id})")
-            return new_command
-            
+            with self.get_db_session() as db:
+                # MySQL 중복 확인 (UNIQUE 제약 활용)
+                existing = db.query(Command).filter(
+                    Command.guild_id == guild_id,
+                    Command.name == name
+                ).first()
+                
+                if existing:
+                    raise CommandAlreadyExistsError(f"명령어 '{name}'이 이미 존재합니다.")
+                
+                # 새 명령어 생성
+                new_command = Command(
+                    guild_id=guild_id,
+                    name=name,
+                    description=description,
+                    response_template=response_template,
+                    created_by=created_by,
+                    use_ai=use_ai
+                )
+                
+                # 허용된 역할 설정
+                if allowed_roles:
+                    new_command.set_allowed_roles(allowed_roles)
+                
+                db.add(new_command)
+                db.flush()  # MySQL AUTO_INCREMENT ID 생성
+                
+                logger.info(f"MySQL: 명령어 생성 성공 - {name} (Guild: {guild_id}, ID: {new_command.id})")
+                return new_command
+                
+        except (CommandAlreadyExistsError, DatabaseError):
+            raise
         except Exception as e:
-            logger.error(f"커맨드 생성 실패: {e}")
-            if isinstance(e, (ValidationError, CommandAlreadyExistsError)):
-                raise
-            raise DatabaseError(f"커맨드 생성 중 오류 발생: {str(e)}")
+            logger.error(f"MySQL: 명령어 생성 실패 - {e}")
+            raise DatabaseError(f"명령어 생성 오류: {str(e)}")
     
-    @staticmethod
-    async def get_command(guild_id: str, name: str) -> Command:
-        """
-        커맨드 조회
-        
-        Args:
-            guild_id: 길드 ID
-            name: 커맨드 이름
-            
-        Returns:
-            커맨드 객체
-            
-        Raises:
-            CommandNotFoundError: 커맨드를 찾을 수 없을 경우
-            DatabaseError: 데이터베이스 오류 발생 시
-        """
+    async def get_command(self, guild_id: str, name: str) -> Command:
+        """MySQL 최적화된 명령어 조회"""
         try:
-            db = next(get_db())
-            
-            command = db.query(Command).filter(
-                Command.guild_id == guild_id,
-                Command.name == name,
-                Command.is_active == True
-            ).first()
-            
-            if not command:
-                raise CommandNotFoundError(name)
-            
-            return command
-            
+            with self.get_db_session() as db:
+                # MySQL 인덱스 활용한 효율적 조회
+                command = db.query(Command).filter(
+                    Command.guild_id == guild_id,
+                    Command.name == name,
+                    Command.is_active == True  # 활성화된 명령어만
+                ).first()
+                
+                if not command:
+                    raise CommandNotFoundError(f"명령어 '{name}'을 찾을 수 없습니다.")
+                
+                # 사용 횟수 증가 (별도 트랜잭션)
+                self._increment_usage_async(command.id)
+                
+                return command
+                
+        except CommandNotFoundError:
+            raise
         except Exception as e:
-            logger.error(f"커맨드 조회 실패: {e}")
-            if isinstance(e, CommandNotFoundError):
-                raise
-            raise DatabaseError(f"커맨드 조회 중 오류 발생: {str(e)}")
+            logger.error(f"MySQL: 명령어 조회 실패 - {e}")
+            raise DatabaseError(f"명령어 조회 오류: {str(e)}")
     
-    @staticmethod
-    async def get_all_commands(guild_id: str) -> List[Command]:
-        """
-        모든 커맨드 조회
-        
-        Args:
-            guild_id: 길드 ID
-            
-        Returns:
-            커맨드 객체 목록
-            
-        Raises:
-            DatabaseError: 데이터베이스 오류 발생 시
-        """
+    def _increment_usage_async(self, command_id: int):
+        """MySQL 비동기 사용 횟수 증가 (성능 최적화)"""
         try:
-            db = next(get_db())
-            
-            commands = db.query(Command).filter(
-                Command.guild_id == guild_id,
-                Command.is_active == True
-            ).all()
-            
-            return commands
-            
+            with self.get_db_session() as db:
+                # 직접 UPDATE 쿼리로 성능 최적화
+                db.execute(
+                    "UPDATE commands SET usage_count = usage_count + 1, "
+                    "last_used = NOW() WHERE id = :id",
+                    {"id": command_id}
+                )
         except Exception as e:
-            logger.error(f"모든 커맨드 조회 실패: {e}")
-            raise DatabaseError(f"커맨드 목록 조회 중 오류 발생: {str(e)}")
+            logger.warning(f"MySQL: 사용 횟수 업데이트 실패 - {e}")
+            # 사용 횟수 업데이트 실패는 치명적이지 않음
     
-    @staticmethod
+    async def get_all_commands(self, guild_id: str) -> List[Command]:
+        """MySQL 최적화된 명령어 목록 조회"""
+        try:
+            with self.get_db_session() as db:
+                commands = db.query(Command).filter(
+                    Command.guild_id == guild_id,
+                    Command.is_active == True
+                ).order_by(Command.created_at.desc()).all()
+                
+                logger.info(f"MySQL: 길드 {guild_id}의 명령어 {len(commands)}개 조회")
+                return commands
+                
+        except Exception as e:
+            logger.error(f"MySQL: 명령어 목록 조회 실패 - {e}")
+            raise DatabaseError(f"명령어 목록 조회 오류: {str(e)}")
+    
     async def update_command(
+        self,
         guild_id: str,
         name: str,
-        description: Optional[str] = None,
-        response_template: Optional[str] = None,
-        use_ai: Optional[bool] = None,
-        ai_prompt: Optional[str] = None,
-        ai_system_message: Optional[str] = None,
-        allowed_roles: Optional[List[str]] = None
+        **updates
     ) -> Command:
-        """
-        커맨드 업데이트
-        
-        Args:
-            guild_id: 길드 ID
-            name: 커맨드 이름
-            description: 커맨드 설명
-            response_template: 응답 템플릿
-            use_ai: AI 사용 여부
-            ai_prompt: AI 프롬프트
-            ai_system_message: AI 시스템 메시지
-            allowed_roles: 허용된 역할 목록
-            
-        Returns:
-            업데이트된 커맨드 객체
-            
-        Raises:
-            CommandNotFoundError: 커맨드를 찾을 수 없을 경우
-            ValidationError: 유효성 검사 실패 시
-            DatabaseError: 데이터베이스 오류 발생 시
-        """
+        """MySQL 최적화된 명령어 업데이트"""
         try:
-            db = next(get_db())
-            
-            # 커맨드 조회
-            command = db.query(Command).filter(
-                Command.guild_id == guild_id,
-                Command.name == name,
-                Command.is_active == True
-            ).first()
-            
-            if not command:
-                raise CommandNotFoundError(name)
-            
-            # 설명 업데이트
-            if description is not None:
-                is_valid, error_message = validate_command_description(description)
-                if not is_valid:
-                    raise ValidationError(error_message)
-                command.description = description
-            
-            # 응답 템플릿 업데이트
-            if response_template is not None:
-                command.response_template = response_template
-            
-            # AI 관련 필드 업데이트
-            if use_ai is not None:
-                command.use_ai = use_ai
-            
-            if ai_prompt is not None:
-                command.ai_prompt = ai_prompt
-            
-            if ai_system_message is not None:
-                command.ai_system_message = ai_system_message
-            
-            # 허용된 역할 업데이트
-            if allowed_roles is not None:
-                command.set_allowed_roles(allowed_roles)
-            
-            db.commit()
-            db.refresh(command)
-            
-            logger.info(f"커맨드 업데이트 성공: {name} (길드: {guild_id})")
-            return command
-            
+            with self.get_db_session() as db:
+                command = db.query(Command).filter(
+                    Command.guild_id == guild_id,
+                    Command.name == name
+                ).with_for_update().first()  # MySQL 행 잠금
+                
+                if not command:
+                    raise CommandNotFoundError(f"명령어 '{name}'을 찾을 수 없습니다.")
+                
+                # 업데이트 적용
+                for key, value in updates.items():
+                    if key == 'allowed_roles' and value is not None:
+                        command.set_allowed_roles(value)
+                    elif hasattr(command, key):
+                        setattr(command, key, value)
+                
+                # MySQL updated_at 자동 갱신
+                from datetime import datetime
+                command.updated_at = datetime.utcnow()
+                
+                logger.info(f"MySQL: 명령어 업데이트 성공 - {name} (Guild: {guild_id})")
+                return command
+                
+        except CommandNotFoundError:
+            raise
         except Exception as e:
-            logger.error(f"커맨드 업데이트 실패: {e}")
-            if isinstance(e, (CommandNotFoundError, ValidationError)):
-                raise
-            raise DatabaseError(f"커맨드 업데이트 중 오류 발생: {str(e)}")
+            logger.error(f"MySQL: 명령어 업데이트 실패 - {e}")
+            raise DatabaseError(f"명령어 업데이트 오류: {str(e)}")
     
-    @staticmethod
-    async def delete_command(guild_id: str, name: str) -> bool:
-        """
-        커맨드 삭제 (비활성화)
-        
-        Args:
-            guild_id: 길드 ID
-            name: 커맨드 이름
-            
-        Returns:
-            삭제 성공 여부
-            
-        Raises:
-            CommandNotFoundError: 커맨드를 찾을 수 없을 경우
-            DatabaseError: 데이터베이스 오류 발생 시
-        """
+    async def delete_command(self, guild_id: str, name: str) -> bool:
+        """MySQL 최적화된 명령어 삭제 (소프트 삭제)"""
         try:
-            db = next(get_db())
-            
-            # 커맨드 조회
-            command = db.query(Command).filter(
-                Command.guild_id == guild_id,
-                Command.name == name,
-                Command.is_active == True
-            ).first()
-            
-            if not command:
-                raise CommandNotFoundError(name)
-            
-            # 비활성화 처리
-            command.is_active = False
-            
-            db.commit()
-            
-            logger.info(f"커맨드 삭제 성공: {name} (길드: {guild_id})")
-            return True
-            
+            with self.get_db_session() as db:
+                command = db.query(Command).filter(
+                    Command.guild_id == guild_id,
+                    Command.name == name
+                ).first()
+                
+                if not command:
+                    raise CommandNotFoundError(f"명령어 '{name}'을 찾을 수 없습니다.")
+                
+                # 소프트 삭제 (데이터 보존)
+                command.is_active = False
+                from datetime import datetime
+                command.updated_at = datetime.utcnow()
+                
+                logger.info(f"MySQL: 명령어 소프트 삭제 성공 - {name} (Guild: {guild_id})")
+                return True
+                
+        except CommandNotFoundError:
+            raise
         except Exception as e:
-            logger.error(f"커맨드 삭제 실패: {e}")
-            if isinstance(e, CommandNotFoundError):
-                raise
-            raise DatabaseError(f"커맨드 삭제 중 오류 발생: {str(e)}")
-    
-    @staticmethod
-    async def generate_command_from_description(
-        guild_id: str,
-        user_description: str,
-        created_by: str
-    ) -> Command:
-        """
-        사용자 설명으로부터 커맨드 생성
-        
-        Args:
-            guild_id: 길드 ID
-            user_description: 사용자 설명
-            created_by: 생성자 ID
-            
-        Returns:
-            생성된 커맨드 객체
-            
-        Raises:
-            ValidationError: 유효성 검사 실패 시
-            CommandAlreadyExistsError: 커맨드가 이미 존재할 경우
-            DatabaseError: 데이터베이스 오류 발생 시
-        """
-        try:
-            # AI로 커맨드 메타데이터 생성
-            metadata = await ai_service.generate_command_metadata(user_description)
-            
-            # 커맨드 생성
-            command = await CommandService.create_command(
-                guild_id=guild_id,
-                name=metadata.get("name", ""),
-                description=metadata.get("description", ""),
-                response_template=metadata.get("response_template", ""),
-                created_by=created_by,
-                use_ai=True,
-                ai_prompt=user_description
-            )
-            
-            return command
-            
-        except Exception as e:
-            logger.error(f"AI 기반 커맨드 생성 실패: {e}")
-            if isinstance(e, (ValidationError, CommandAlreadyExistsError)):
-                raise
-            raise DatabaseError(f"AI 기반 커맨드 생성 중 오류 발생: {str(e)}")
+            logger.error(f"MySQL: 명령어 삭제 실패 - {e}")
+            raise DatabaseError(f"명령어 삭제 오류: {str(e)}")
 
-
-# 전역 커맨드 서비스 인스턴스
+# 전역 서비스 인스턴스
 command_service = CommandService()

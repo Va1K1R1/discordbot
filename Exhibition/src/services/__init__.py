@@ -12,6 +12,11 @@ from .permission_service import (
     check_role_permission,
     handle_permission_error
 )
+from .universal_discord_generator import (
+    DiscordAPIReference,
+    UniversalDiscordGenerator,
+    universal_generator
+)
 
 __all__ = [
     'AIService',
@@ -21,5 +26,8 @@ __all__ = [
     'check_admin_permission',
     'check_guild_permission',
     'check_role_permission',
-    'handle_permission_error'
+    'handle_permission_error',
+    'DiscordAPIReference',
+    'UniversalDiscordGenerator',
+    'universal_generator'
 ]

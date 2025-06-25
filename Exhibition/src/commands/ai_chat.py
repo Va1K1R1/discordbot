@@ -15,6 +15,31 @@ from src.exceptions.custom_exceptions import AIServiceError
 
 logger = logging.getLogger(__name__)
 
+# ai_chat.py의 DB 세션 사용 부분만 수정
+
+# 🔥 기존 위험한 코드 제거:
+# db = next(get_db())
+# db.add(conversation)
+# db.commit()
+# # db.close() 없음! ❌
+
+# ✅ MySQL 안전한 코드로 교체:
+from contextlib import contextmanager
+
+@contextmanager
+def get_safe_db():
+    """MySQL용 안전한 DB 세션"""
+    db = next(get_db())
+    try:
+        yield db
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        logger.error(f"MySQL DB 오류: {e}")
+        raise
+    finally:
+        db.close()  # 🔥 MySQL 연결 해제
+
 
 class AIChatCog(commands.Cog):
     """AI 채팅 명령어"""
@@ -64,27 +89,27 @@ class AIChatCog(commands.Cog):
             # 의도 분석
             intent_data = await ai_service.analyze_intent(question)
             
-            # 대화 기록 저장
-            db = next(get_db())
-            conversation = ConversationHistory(
-                user_id=str(interaction.user.id),
-                guild_id=str(interaction.guild.id),
-                channel_id=str(interaction.channel.id),
-                message=question,
-                response=response_content,
-                tokens_used=metadata.get("tokens_used", 0),
-                processing_time=processing_time,
-                intent=intent_data.get("intent", "일반 대화"),
-                entities=str(intent_data.get("entities", {}))
-            )
-            db.add(conversation)
-            db.commit()
+            # 🔥 안전한 MySQL DB 사용:
+            with get_safe_db() as db:
+                conversation = ConversationHistory(
+                    user_id=str(interaction.user.id),
+                    guild_id=str(interaction.guild.id),
+                    channel_id=str(interaction.channel.id),
+                    message=question,
+                    response=response_content,
+                    tokens_used=metadata.get("tokens_used", 0),
+                    processing_time=processing_time,
+                    intent=intent_data.get("intent", "일반 대화"),
+                    entities=str(intent_data.get("entities", {}))
+                )
+                db.add(conversation)
+            # 자동 커밋/롤백/close
             
             # 응답 전송
             await interaction.followup.send(truncate_text(response_content, 2000))
             
         except Exception as e:
-            logger.error(f"AI 질문 처리 실패: {e}")
+            logger.error(f"MySQL: AI 질문 처리 실패 - {e}")
             await interaction.followup.send(
                 "❌ 질문 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
                 ephemeral=True

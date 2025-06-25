@@ -45,7 +45,7 @@ class Settings(BaseSettings):
 
     # 로깅 설정
     log_level: str = "INFO"
-    log_file: str = "logs/bot.log"
+    log_file: str = "../logs/bot.log"
 
     # 보안 설정
     admin_user_ids: List[int] = []

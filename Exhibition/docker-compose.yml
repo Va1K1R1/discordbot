@@ -9,8 +9,8 @@ services:
       # MySQL 연결 정보
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
-      - MYSQL_USER=j
-      - MYSQL_PASSWORD=4820
+      - MYSQL_USER=example
+      - MYSQL_PASSWORD=example
       - MYSQL_DATABASE=discord_bot
       # 또는 전체 DATABASE_URL로 설정
       - DATABASE_URL=mysql+pymysql://j:4820@mysql:3306/discord_bot?charset=utf8mb4

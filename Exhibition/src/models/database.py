@@ -1,94 +1,116 @@
-from sqlalchemy import create_engine, text, inspect
+import pymysql
+import logging
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
-import logging
 from src.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
-# MySQL 데이터베이스 엔진 생성 (연결 풀 설정 추가)
-engine = create_engine(
-    settings.database_url,
-    pool_pre_ping=True,  # 연결 상태 확인
-    pool_recycle=3600,   # 1시간마다 연결 재생성
-    echo=False,          # SQL 쿼리 로깅 (개발 시에만 True)
-    connect_args={
-        "charset": "utf8mb4",
-        "autocommit": False
-    }
-)
-
-# 세션 팩토리 생성
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Base 클래스 생성
+# 데이터베이스 엔진 및 세션 설정
+engine = None
+SessionLocal = None
 Base = declarative_base()
 
-
-def get_db():
-    """데이터베이스 세션 생성"""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 def init_database():
-    """데이터베이스 초기화"""
+    """데이터베이스 초기화 (동기 함수)"""
+    global engine, SessionLocal
+    
     try:
-        # 데이터베이스 연결 테스트
-        with engine.connect() as connection:
-            result = connection.execute(text("SELECT 1"))
-            logger.info("MySQL 데이터베이스 연결 성공")
+        logger.info("데이터베이스 초기화 중...")
+        
+        # MySQL 데이터베이스 생성 (존재하지 않는 경우)
+        create_database_if_not_exists()
+        
+        # SQLAlchemy 엔진 생성
+        database_url = (
+            f"mysql+pymysql://{settings.mysql_user}:{settings.mysql_password}"
+            f"@{settings.mysql_host}:{settings.mysql_port}/{settings.mysql_database}"
+            f"?charset=utf8mb4"
+        )
+        
+        logger.info(f"MySQL 데이터베이스 URL: {database_url}")
+        
+        engine = create_engine(
+            database_url,
+            echo=False,
+            pool_recycle=3600,
+            pool_pre_ping=True
+        )
+        
+        # 연결 테스트
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        logger.info("MySQL 데이터베이스 연결 성공")
+        
+        # 세션 팩토리 생성
+        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         
         # 기존 테이블 확인
+        from sqlalchemy import inspect
         inspector = inspect(engine)
         existing_tables = inspector.get_table_names()
         logger.info(f"기존 테이블: {existing_tables}")
         
         # 테이블 생성
         Base.metadata.create_all(bind=engine)
-        logger.info("데이터베이스 테이블 생성 완료")
         
         # 생성된 테이블 확인
         inspector = inspect(engine)
         created_tables = inspector.get_table_names()
+        logger.info(f"데이터베이스 테이블 생성 완료")
         logger.info(f"생성된 테이블: {created_tables}")
         
         return True
         
-    except OperationalError as e:
-        logger.error(f"MySQL 데이터베이스 연결 실패: {e}")
-        logger.error("MySQL 서버가 실행 중인지, 데이터베이스가 존재하는지 확인하세요.")
-        return False
     except Exception as e:
         logger.error(f"데이터베이스 초기화 실패: {e}")
-        return False
-
+        raise
 
 def create_database_if_not_exists():
-    """데이터베이스가 없으면 생성"""
+    """데이터베이스가 존재하지 않으면 생성"""
     try:
-        # 데이터베이스 없이 연결 (mysql 기본 데이터베이스 사용)
-        temp_url = f"mysql+pymysql://{settings.mysql_user}:{settings.mysql_password}@{settings.mysql_host}:{settings.mysql_port}/mysql?charset=utf8mb4"
-        temp_engine = create_engine(temp_url)
+        # MySQL 서버에 연결 (데이터베이스 지정하지 않음)
+        connection = pymysql.connect(
+            host=settings.mysql_host,
+            port=settings.mysql_port,
+            user=settings.mysql_user,
+            password=settings.mysql_password,
+            charset='utf8mb4'
+        )
         
-        with temp_engine.connect() as connection:
+        with connection.cursor() as cursor:
             # 데이터베이스 존재 확인
-            result = connection.execute(text(f"SHOW DATABASES LIKE '{settings.mysql_database}'"))
-            if not result.fetchone():
-                # 데이터베이스 생성
-                connection.execute(text(f"CREATE DATABASE {settings.mysql_database} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))
-                connection.commit()
-                logger.info(f"데이터베이스 '{settings.mysql_database}' 생성 완료")
-            else:
+            cursor.execute(f"SHOW DATABASES LIKE '{settings.mysql_database}'")
+            result = cursor.fetchone()
+            
+            if result:
                 logger.info(f"데이터베이스 '{settings.mysql_database}' 이미 존재")
+            else:
+                # 데이터베이스 생성
+                cursor.execute(f"CREATE DATABASE {settings.mysql_database} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+                logger.info(f"데이터베이스 '{settings.mysql_database}' 생성 완료")
         
-        temp_engine.dispose()
-        return True
+        connection.close()
         
     except Exception as e:
         logger.error(f"데이터베이스 생성 실패: {e}")
-        return False
+        raise
+
+def get_db():
+    """데이터베이스 세션 제공 함수"""
+    if SessionLocal is None:
+        raise RuntimeError("데이터베이스가 초기화되지 않았습니다. init_database()를 먼저 호출하세요.")
+    
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+def get_engine():
+    """데이터베이스 엔진 반환"""
+    if engine is None:
+        raise RuntimeError("데이터베이스가 초기화되지 않았습니다. init_database()를 먼저 호출하세요.")
+    return engine
