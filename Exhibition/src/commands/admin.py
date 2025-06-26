@@ -22,6 +22,54 @@ class AdminCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    @commands.command(name="sync")
+    @commands.has_permissions(administrator=True)
+    async def sync_commands(self, ctx, scope: Optional[str] = None):
+        """슬래시 커맨드 수동 동기화"""
+        try:
+            if scope == "global":
+                # 전역 동기화
+                synced = await self.bot.tree.sync()
+                await ctx.send(f"✅ {len(synced)}개의 전역 슬래시 커맨드가 동기화되었습니다.")
+                
+            elif scope == "guild" or scope is None:
+                # 현재 길드 동기화
+                synced = await self.bot.tree.sync(guild=ctx.guild)
+                await ctx.send(f"✅ {len(synced)}개의 길드 슬래시 커맨드가 동기화되었습니다.")
+                
+            elif scope == "clear":
+                # 길드 커맨드 초기화
+                self.bot.tree.clear_commands(guild=ctx.guild)
+                await self.bot.tree.sync(guild=ctx.guild)
+                await ctx.send("✅ 길드 슬래시 커맨드가 초기화되었습니다.")
+                
+            elif scope == "copy":
+                # 전역 커맨드를 현재 길드로 복사
+                self.bot.tree.copy_global_to(guild=ctx.guild)
+                synced = await self.bot.tree.sync(guild=ctx.guild)
+                await ctx.send(f"✅ {len(synced)}개의 전역 커맨드가 길드로 복사되었습니다.")
+                
+            else:
+                await ctx.send(
+                    "❌ 올바른 옵션을 사용해주세요:\n"
+                    "`!sync` - 현재 길드 동기화\n"
+                    "`!sync global` - 전역 동기화\n"
+                    "`!sync clear` - 길드 커맨드 초기화\n"
+                    "`!sync copy` - 전역 커맨드를 길드로 복사"
+                )
+                
+        except Exception as e:
+            logger.error(f"커맨드 동기화 실패: {e}")
+            await ctx.send(f"❌ 동기화 중 오류가 발생했습니다: {str(e)}")
+    
+    @sync_commands.error
+    async def sync_error(self, ctx, error):
+        """sync 명령어 오류 처리"""
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("❌ 이 명령어를 사용하려면 관리자 권한이 필요합니다.")
+        else:
+            await ctx.send(f"❌ 오류가 발생했습니다: {str(error)}")
+    
     @app_commands.command(name="상태", description="봇 상태 정보를 확인합니다")
     @check_admin_permission()
     async def status(self, interaction: discord.Interaction):
@@ -38,6 +86,10 @@ class AdminCog(commands.Cog):
             commands = await command_service.get_all_commands(str(interaction.guild.id))
             command_count = len(commands)
             
+            # 슬래시 커맨드 수 조회
+            slash_commands = len(self.bot.tree.get_commands())
+            guild_commands = len(self.bot.tree.get_commands(guild=interaction.guild))
+            
             # 임베드 생성
             embed = create_embed(
                 title="🤖 봇 상태 정보",
@@ -46,7 +98,9 @@ class AdminCog(commands.Cog):
                     {"name": "가동 시간", "value": uptime_str, "inline": True},
                     {"name": "서버 수", "value": str(guild_count), "inline": True},
                     {"name": "사용자 수", "value": str(user_count), "inline": True},
-                    {"name": "명령어 수", "value": str(command_count), "inline": True},
+                    {"name": "커스텀 명령어", "value": str(command_count), "inline": True},
+                    {"name": "전역 슬래시 커맨드", "value": str(slash_commands), "inline": True},
+                    {"name": "길드 슬래시 커맨드", "value": str(guild_commands), "inline": True},
                     {"name": "핑", "value": f"{round(self.bot.latency * 1000)}ms", "inline": True},
                     {"name": "버전", "value": "1.0.0", "inline": True}
                 ],

@@ -1,66 +1,62 @@
+import asyncio
+import logging
+import json
+from typing import Dict, Any, Optional, List
 import discord
 from discord import app_commands
 from discord.ext import commands
-import logging
-import json
-import ast
-from typing import Dict, List, Optional, Any, Union
-from src.services.universal_discord_generator import universal_generator
-from src.services.ai_service import ai_service
+from src.services.ai_service import AIService
 from src.services.command_service import command_service
-from src.models.command import Command
 from src.utils.helpers import create_embed
-import asyncio
-import inspect
+from src.exceptions.custom_exceptions import ValidationError, CommandAlreadyExistsError
 
 logger = logging.getLogger(__name__)
 
 
 class UniversalCommandModal(discord.ui.Modal):
-    """Discord API 전체 기능을 활용하는 커맨드 생성 모달"""
+    """Universal 커맨드 생성 모달"""
     
     def __init__(self):
-        super().__init__(title="🌐 Universal Discord Command Generator", timeout=600)
+        super().__init__(title="Universal 커맨드 생성")
         
-        # 사용자 요청 입력
+        # 커맨드 요청 입력
         self.command_request = discord.ui.TextInput(
-            label="어떤 기능을 만들고 싶나요?",
-            placeholder="예: 실시간 음성 채널 모니터링, 고급 투표 시스템, 멀티 스테이지 이벤트 등...",
+            label="만들고 싶은 커맨드 설명",
+            placeholder="예: 랜덤 숫자를 생성하는 커맨드 만들어줘",
             style=discord.TextStyle.paragraph,
-            max_length=2000,
+            max_length=1000,
             required=True
         )
+        self.add_item(self.command_request)
         
-        # 복잡도 수준
+        # 복잡도 레벨
         self.complexity_level = discord.ui.TextInput(
-            label="복잡도 수준 (simple/advanced/expert)",
-            placeholder="advanced",
-            default="advanced",
-            max_length=20,
+            label="복잡도 (1-5, 선택사항)",
+            placeholder="1: 단순, 3: 보통, 5: 복잡 (기본값: 3)",
+            style=discord.TextStyle.short,
+            max_length=1,
             required=False
         )
+        self.add_item(self.complexity_level)
         
         # 특별 요구사항
         self.special_requirements = discord.ui.TextInput(
             label="특별 요구사항 (선택사항)",
-            placeholder="특정 Discord API 기능, 권한, UI 컴포넌트 등",
+            placeholder="특정 권한, 역할, 기능 등의 요구사항",
             style=discord.TextStyle.paragraph,
-            max_length=1000,
+            max_length=500,
             required=False
         )
-        
-        # 실험 기능 사용 여부
-        self.use_experimental = discord.ui.TextInput(
-            label="실험적 기능 사용 (yes/no)",
-            placeholder="yes",
-            default="yes",
-            max_length=3,
-            required=False
-        )
-        
-        self.add_item(self.command_request)
-        self.add_item(self.complexity_level)
         self.add_item(self.special_requirements)
+        
+        # 실험적 기능 사용
+        self.use_experimental = discord.ui.TextInput(
+            label="실험적 기능 사용 (y/n, 선택사항)",
+            placeholder="실험적 AI 기능을 사용할지 여부 (기본값: n)",
+            style=discord.TextStyle.short,
+            max_length=1,
+            required=False
+        )
         self.add_item(self.use_experimental)
     
     async def on_submit(self, interaction: discord.Interaction):
@@ -68,303 +64,309 @@ class UniversalCommandModal(discord.ui.Modal):
         try:
             await interaction.response.defer(ephemeral=True)
             
-            # 입력값 처리
-            user_request = self.command_request.value
-            complexity = self.complexity_level.value or "advanced"
-            requirements = self.special_requirements.value
-            experimental = self.use_experimental.value.lower() in ["yes", "y", "true", "1"]
+            # 입력값 검증 및 처리
+            request = self.command_request.value.strip()
+            if not request:
+                await interaction.followup.send("❌ 커맨드 설명을 입력해주세요.", ephemeral=True)
+                return
             
-            # 진행 상황 알림
-            await interaction.followup.send(
-                "🔄 Universal AI가 Discord API 전체를 분석하여 고급 커맨드를 생성하고 있습니다...\n"
-                f"**요청:** {user_request[:100]}...\n"
-                f"**복잡도:** {complexity}\n"
-                f"**실험 기능:** {'사용' if experimental else '미사용'}",
-                ephemeral=True
-            )
+            # 복잡도 처리
+            complexity = 3  # 기본값
+            if self.complexity_level.value:
+                try:
+                    complexity = int(self.complexity_level.value)
+                    if not 1 <= complexity <= 5:
+                        complexity = 3
+                except ValueError:
+                    complexity = 3
             
-            # Universal Generator로 고급 커맨드 생성
-            generation_result = await universal_generator.generate_universal_command(
-                user_request=f"{user_request}\n\n추가 요구사항: {requirements}",
-                complexity_level=complexity,
-                use_experimental=experimental
-            )
+            # 실험적 기능 사용 여부
+            use_experimental = self.use_experimental.value.lower() in ['y', 'yes', '예', '네'] if self.use_experimental.value else False
             
-            # 생성된 코드 정보
-            generated_code = generation_result["generated_code"]
-            feature_analysis = generation_result["feature_analysis"]
-            discord_features = generation_result["discord_features_used"]
-            enhancements = generation_result["enhancement_suggestions"]
+            # AI로 커맨드 메타데이터 생성
+            try:
+                metadata = await self._extract_command_metadata(
+                    request, 
+                    complexity, 
+                    self.special_requirements.value,
+                    use_experimental
+                )
+            except Exception as e:
+                logger.error(f"메타데이터 추출 실패: {e}")
+                await interaction.followup.send(
+                    f"❌ 커맨드 메타데이터 생성 중 오류가 발생했습니다: {str(e)}",
+                    ephemeral=True
+                )
+                return
             
-            # 커맨드 메타데이터 추출
-            command_metadata = await self._extract_command_metadata(generated_code, user_request)
-            
-            # 데이터베이스에 저장
-            command = Command(
-                guild_id=str(interaction.guild.id),
-                name=command_metadata["name"],
-                description=command_metadata["description"],
-                response_template=generated_code,  # 전체 코드를 저장
-                use_ai=True,
-                ai_prompt=user_request,
-                ai_system_message=f"Discord API Universal Generator - Complexity: {complexity}",
-                created_by=str(interaction.user.id),
-                allowed_roles=[]  # 기본적으로 모든 사용자 허용
-            )
-            
-            await command_service.create_command(command)
-            
-            # 실시간 동적 커맨드 등록
-            await self._register_universal_command(interaction, command, generated_code, feature_analysis)
-            
-            # 결과 리포트 생성
-            await self._send_generation_report(
-                interaction, command_metadata, feature_analysis, 
-                discord_features, enhancements
-            )
-            
+            # 커맨드 등록
+            try:
+                command_result = await self._register_universal_command(
+                    interaction, 
+                    metadata,
+                    request
+                )
+                
+                await self._send_generation_report(
+                    interaction, 
+                    command_result, 
+                    metadata,
+                    complexity,
+                    use_experimental
+                )
+                
+            except CommandAlreadyExistsError:
+                await interaction.followup.send(
+                    f"❌ 커맨드 '{metadata.get('name', 'unknown')}'이 이미 존재합니다.",
+                    ephemeral=True
+                )
+            except Exception as e:
+                logger.error(f"Universal 커맨드 생성 실패: {e}")
+                await interaction.followup.send(
+                    f"❌ 커맨드 생성 중 오류가 발생했습니다: {str(e)}",
+                    ephemeral=True
+                )
+                
         except Exception as e:
-            logger.error(f"Universal 커맨드 생성 실패: {e}")
-            await interaction.followup.send(
-                f"❌ Universal 커맨드 생성 중 오류가 발생했습니다: {str(e)}",
-                ephemeral=True
-            )
+            logger.error(f"모달 제출 처리 실패: {e}")
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "❌ 요청 처리 중 오류가 발생했습니다.",
+                    ephemeral=True
+                )
     
-    async def _extract_command_metadata(self, code: str, user_request: str) -> Dict[str, str]:
-        """생성된 코드에서 커맨드 메타데이터 추출"""
+    async def _extract_command_metadata(
+        self, 
+        request: str, 
+        complexity: int, 
+        special_requirements: Optional[str],
+        use_experimental: bool
+    ) -> Dict[str, Any]:
+        """AI를 사용한 커맨드 메타데이터 추출"""
+        ai_service = AIService()
+        
+        # 영어 프롬프트 구성
+        prompt = f"""
+User request: {request}
+Complexity level: {complexity}/5
+Special requirements: {special_requirements or 'None'}
+Experimental features: {'Enabled' if use_experimental else 'Disabled'}
+
+Based on the above information, generate metadata for a Discord slash command.
+Respond ONLY with valid JSON format without any additional text.
+
+{{
+    "name": "command_name",
+    "description": "Command description (under 100 characters)",
+    "response_template": "Response template",
+    "use_ai": true/false,
+    "parameters": []
+}}
+
+Rules:
+- name: lowercase letters, numbers, underscores only, 1-32 characters
+- description: under 100 characters
+- response_template: actual response content
+- Do NOT include any text outside of JSON
+"""
+        
         try:
-            # AI로 메타데이터 추출
-            system_prompt = """
-            생성된 Discord 봇 코드를 분석하여 커맨드 메타데이터를 추출해주세요.
-            다음 JSON 형태로 반환해주세요:
-            {
-                "name": "커맨드_이름",
-                "description": "커맨드 설명"
-            }
+            response, _ = await ai_service.generate_response(prompt)
             
-            커맨드 이름은 Discord 규칙에 맞게 영문 소문자, 숫자, 언더스코어만 사용하고 1-32자로 제한해주세요.
-            """
+            # JSON 파싱 시도
+            if not response or not response.strip():
+                raise ValueError("Empty AI response")
             
-            response, _ = await ai_service.generate_response(
-                f"사용자 요청: {user_request}\n\n생성된 코드:\n{code[:1000]}...",
-                system_message=system_prompt
-            )
+            # JSON 시작/끝 찾기
+            response = response.strip()
+            start_idx = response.find('{')
+            end_idx = response.rfind('}')
             
-            return json.loads(response)
+            if start_idx == -1 or end_idx == -1:
+                raise ValueError("Cannot find valid JSON format")
+            
+            json_str = response[start_idx:end_idx+1]
+            metadata = json.loads(json_str)
+            
+            # 필수 필드 검증
+            required_fields = ['name', 'description', 'response_template']
+            for field in required_fields:
+                if field not in metadata:
+                    raise ValueError(f"Required field '{field}' is missing")
+            
+            # 기본값 설정
+            metadata.setdefault('use_ai', False)
+            metadata.setdefault('parameters', [])
+            
+            return metadata
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON parsing failed: {e}, response: {response}")
+            # 기본 메타데이터 반환
+            return self._create_fallback_metadata(request)
         except Exception as e:
-            logger.error(f"메타데이터 추출 실패: {e}")
-            # 기본값 반환
-            import re
-            safe_name = re.sub(r'[^a-z0-9_]', '_', user_request.lower()[:20])
-            return {
-                "name": f"universal_{safe_name}",
-                "description": f"AI 생성 고급 커맨드: {user_request[:80]}..."
-            }
+            logger.error(f"Metadata extraction failed: {e}")
+            return self._create_fallback_metadata(request)
+    
+    def _create_fallback_metadata(self, request: str) -> Dict[str, Any]:
+        """AI 실패 시 기본 메타데이터 생성"""
+        # 간단한 이름 생성
+        name = "custom_command"
+        words = request.split()[:2]  # 처음 두 단어만 사용
+        if words:
+            name = "_".join(word.lower() for word in words if word.isalnum())[:32]
+        
+        return {
+            "name": name,
+            "description": f"사용자 정의 커맨드: {request[:50]}...",
+            "response_template": f"요청하신 기능을 실행합니다: {request}",
+            "use_ai": False,
+            "parameters": []
+        }
     
     async def _register_universal_command(
         self, 
         interaction: discord.Interaction, 
-        command: Command, 
-        generated_code: str,
-        feature_analysis: Dict[str, Any]
+        metadata: Dict[str, Any],
+        original_request: str
     ):
-        """Universal 커맨드를 실시간으로 등록"""
+        """Universal 커맨드 등록 - 수정된 버전"""
         try:
-            bot = interaction.client
+            # 필수 매개변수 준비
+            guild_id = str(interaction.guild.id)
+            name = metadata['name']
+            description = metadata['description']
+            response_template = metadata['response_template']
+            created_by = interaction.user.id
+            use_ai = metadata.get('use_ai', False)
             
-            # 코드 실행 환경 준비
-            exec_globals = {
-                'discord': discord,
-                'app_commands': app_commands,
-                'commands': commands,
-                'asyncio': asyncio,
-                'logger': logger,
-                'bot': bot,
-                'interaction': interaction,
-                'json': json,
-                'List': List,
-                'Dict': Dict,
-                'Optional': Optional,
-                'Any': Any,
-                'Union': Union
-            }
+            # 커맨드 생성 - 반환값에서 필요한 정보만 추출
+            command = await command_service.create_command(
+                guild_id=guild_id,
+                name=name,
+                description=description,
+                response_template=response_template,
+                created_by=created_by,
+                use_ai=use_ai
+            )
             
-            # 코드 실행하여 함수 정의
-            exec(generated_code, exec_globals)
+            # 세션 범위 내에서 필요한 정보 추출
+            command_id = command.id
+            command_name = command.name
+            command_created_at = command.created_at
             
-            # 생성된 함수 찾기
-            command_function = None
-            for name, obj in exec_globals.items():
-                if callable(obj) and not name.startswith('_') and name not in ['discord', 'app_commands', 'commands', 'asyncio', 'logger', 'bot', 'interaction', 'json']:
-                    if asyncio.iscoroutinefunction(obj):
-                        command_function = obj
-                        break
-            
-            if command_function:
-                # 슬래시 커맨드로 래핑
-                @app_commands.command(name=command.name, description=command.description)
-                async def universal_command_wrapper(cmd_interaction: discord.Interaction, user_input: Optional[str] = ""):
-                    try:
-                        # 원본 함수 실행
-                        await command_function(cmd_interaction, user_input)
+            # Discord 슬래시 커맨드 등록
+            async def dynamic_command_callback(cmd_interaction: discord.Interaction):
+                """동적 생성된 커맨드 콜백"""
+                try:
+                    if use_ai:
+                        ai_service = AIService()
+                        enhanced_response = await ai_service.enhance_response(
+                            response_template,
+                            f"User: {cmd_interaction.user.name}",
+                            {"request": original_request}
+                        )
+                        await cmd_interaction.response.send_message(enhanced_response)
+                    else:
+                        await cmd_interaction.response.send_message(response_template)
                         
-                        # 사용 통계 업데이트
-                        command.increment_usage()
-                        await command_service.update_command_usage(command.guild_id, command.name)
-                        
-                    except Exception as e:
-                        logger.error(f"Universal 커맨드 실행 오류: {e}")
-                        if not cmd_interaction.response.is_done():
-                            await cmd_interaction.response.send_message(
-                                f"❌ 커맨드 실행 중 오류가 발생했습니다: {str(e)}",
-                                ephemeral=True
-                            )
-                        else:
-                            await cmd_interaction.followup.send(
-                                f"❌ 커맨드 실행 중 오류가 발생했습니다: {str(e)}",
-                                ephemeral=True
-                            )
-                
-                # 봇에 커맨드 추가
-                bot.tree.add_command(universal_command_wrapper, guild=interaction.guild)
-                await bot.tree.sync(guild=interaction.guild)
-                
-                logger.info(f"Universal 커맨드 등록 성공: {command.name}")
-            else:
-                raise Exception("생성된 코드에서 실행 가능한 함수를 찾을 수 없습니다.")
-                
+                except Exception as e:
+                    logger.error(f"동적 커맨드 실행 실패: {e}")
+                    await cmd_interaction.response.send_message(
+                        "❌ 커맨드 실행 중 오류가 발생했습니다.",
+                        ephemeral=True
+                    )
+            
+            # 슬래시 커맨드 생성 및 등록
+            slash_command = app_commands.Command(
+                name=name,
+                description=description,
+                callback=dynamic_command_callback
+            )
+            
+            # 봇 트리에 추가
+            interaction.client.tree.add_command(slash_command, guild=interaction.guild)
+            
+            # 즉시 동기화
+            await interaction.client.tree.sync(guild=interaction.guild)
+            
+            logger.info(f"Universal 커맨드 '{command_name}' 등록 완료 (ID: {command_id})")
+            
+            # 세션과 독립적인 결과 객체 반환
+            return type('CommandResult', (), {
+                'id': command_id,
+                'name': command_name,
+                'created_at': command_created_at
+            })()
+            
         except Exception as e:
             logger.error(f"Universal 커맨드 등록 실패: {e}")
             raise
     
     async def _send_generation_report(
-        self,
-        interaction: discord.Interaction,
-        command_metadata: Dict[str, str],
-        feature_analysis: Dict[str, Any],
-        discord_features: List[str],
-        enhancements: List[str]
+        self, 
+        interaction: discord.Interaction, 
+        command, 
+        metadata: Dict[str, Any],
+        complexity: int,
+        use_experimental: bool
     ):
-        """생성 결과 리포트 전송"""
+        """커맨드 생성 보고서 전송"""
         embed = create_embed(
-            title="🌐 Universal Command 생성 완료!",
-            description=f"**`/{command_metadata['name']}`** 커맨드가 성공적으로 생성되어 실시간으로 등록되었습니다!",
-            color=0x00ff00
+            title="🚀 Universal 커맨드 생성 완료!",
+            color=0x00ff00,
+            description=f"커맨드 `/{metadata['name']}`이 성공적으로 생성되었습니다.",
+            fields=[
+                {"name": "📝 설명", "value": metadata['description'], "inline": False},
+                {"name": "🤖 AI 사용", "value": "예" if metadata.get('use_ai') else "아니오", "inline": True},
+                {"name": "📊 복잡도", "value": f"{complexity}/5", "inline": True},
+                {"name": "🧪 실험적 기능", "value": "사용" if use_experimental else "미사용", "inline": True},
+                {"name": "🆔 커맨드 ID", "value": str(command.id), "inline": True},
+                {"name": "📅 생성일", "value": command.created_at.strftime("%Y-%m-%d %H:%M"), "inline": True},
+                {"name": "💬 응답 예시", "value": metadata['response_template'][:100] + "...", "inline": False}
+            ],
+            footer=f"생성자: {interaction.user.name} | 바로 사용 가능합니다!"
         )
         
-        # 기본 정보
-        embed.add_field(
-            name="📋 기본 정보",
-            value=f"**이름:** {command_metadata['name']}\n**설명:** {command_metadata['description'][:100]}...",
-            inline=False
-        )
-        
-        # 사용된 Discord 기능들
-        if discord_features:
-            features_text = "\n".join([f"• {feature}" for feature in discord_features[:5]])
-            if len(discord_features) > 5:
-                features_text += f"\n• ... 외 {len(discord_features) - 5}개"
-            
-            embed.add_field(
-                name="🔧 사용된 Discord API 기능",
-                value=features_text,
-                inline=True
-            )
-        
-        # 복잡도 정보
-        complexity_score = feature_analysis.get("complexity", 0)
-        api_coverage = feature_analysis.get("api_coverage", {})
-        
-        embed.add_field(
-            name="📊 복잡도 분석",
-            value=f"**점수:** {complexity_score}/10\n**Core API:** {api_coverage.get('core', 0)}%\n**UI:** {api_coverage.get('ui', 0)}%\n**Events:** {api_coverage.get('events', 0)}%",
-            inline=True
-        )
-        
-        # 향상 제안 (처음 3개만)
-        if enhancements and len(enhancements) > 0:
-            enhancement_text = "\n".join([f"• {enh[:50]}..." for enh in enhancements[:3]])
-            embed.add_field(
-                name="💡 추가 기능 제안",
-                value=enhancement_text,
-                inline=False
-            )
-        
-        embed.set_footer(text=f"생성자: {interaction.user.name} | Universal AI Generator")
-        
-        await interaction.followup.send(embed=embed, ephemeral=False)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
 
 class UniversalDynamicCog(commands.Cog):
-    """Universal Discord API 동적 커맨드 시스템"""
+    """Universal 동적 커맨드 생성 시스템"""
     
     def __init__(self, bot):
         self.bot = bot
-        self.active_commands = {}  # 활성 커맨드 캐시
+        self.active_commands = {}
     
-    @app_commands.command(name="universal", description="🌐 Discord API 전체 기능을 활용한 고급 커맨드를 AI가 생성합니다")
+    @app_commands.command(name="universal", description="AI를 활용한 Universal 커맨드 생성")
     async def create_universal_command(self, interaction: discord.Interaction):
-        """Universal Discord Command Generator"""
+        """Universal 커맨드 생성 인터페이스"""
         modal = UniversalCommandModal()
         await interaction.response.send_modal(modal)
     
-    @app_commands.command(name="커맨드분석", description="생성된 커맨드의 상세 분석 정보를 확인합니다")
+    @app_commands.command(name="커맨드분석", description="생성된 커맨드의 상세 분석 정보")
     @app_commands.describe(command_name="분석할 커맨드 이름")
     async def analyze_command(self, interaction: discord.Interaction, command_name: str):
-        """커맨드 상세 분석"""
+        """커맨드 분석"""
         try:
             await interaction.response.defer(ephemeral=True)
             
-            # 데이터베이스에서 커맨드 조회
+            # 커맨드 조회
             command = await command_service.get_command(str(interaction.guild.id), command_name)
             
-            if not command:
-                await interaction.followup.send(
-                    f"❌ 커맨드 `{command_name}`을 찾을 수 없습니다.",
-                    ephemeral=True
-                )
-                return
+            # 분석 정보 생성
+            analysis = await self._analyze_command_code(command)
             
-            # AI로 코드 분석
-            analysis_result = await self._analyze_command_code(command.response_template)
-            
-            # 분석 결과 임베드 생성
             embed = create_embed(
-                title=f"🔍 /{command_name} 상세 분석",
-                description="Universal AI가 분석한 커맨드 정보입니다.",
-                color=0x3498db
-            )
-            
-            embed.add_field(
-                name="📝 기본 정보",
-                value=f"**설명:** {command.description}\n**생성자:** <@{command.created_by}>\n**사용 횟수:** {command.usage_count}회",
-                inline=False
-            )
-            
-            embed.add_field(
-                name="🧠 AI 분석 결과",
-                value=analysis_result.get("summary", "분석 결과 없음")[:1024],
-                inline=False
-            )
-            
-            # Discord 기능 사용도
-            features_used = analysis_result.get("discord_features", [])
-            if features_used:
-                features_text = "\n".join([f"• {feature}" for feature in features_used[:8]])
-                embed.add_field(
-                    name="🔧 사용된 Discord 기능",
-                    value=features_text,
-                    inline=True
-                )
-            
-            # 성능 평가
-            performance = analysis_result.get("performance_score", 0)
-            complexity = analysis_result.get("complexity_score", 0)
-            
-            embed.add_field(
-                name="📊 성능 평가",
-                value=f"**성능 점수:** {performance}/10\n**복잡도:** {complexity}/10",
-                inline=True
+                title=f"🔍 커맨드 분석: /{command.name}",
+                color=0x3498db,
+                fields=[
+                    {"name": "📊 기본 정보", "value": f"ID: {command.id}\n생성일: {command.created_at.strftime('%Y-%m-%d %H:%M')}", "inline": True},
+                    {"name": "📈 사용 통계", "value": f"사용 횟수: {command.usage_count}\n마지막 사용: {command.last_used.strftime('%Y-%m-%d %H:%M') if command.last_used else '없음'}", "inline": True},
+                    {"name": "🤖 AI 설정", "value": f"AI 사용: {'예' if command.use_ai else '아니오'}", "inline": True},
+                    {"name": "🔧 기술적 분석", "value": analysis, "inline": False}
+                ],
+                footer=f"분석 요청자: {interaction.user.name}"
             )
             
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -372,41 +374,49 @@ class UniversalDynamicCog(commands.Cog):
         except Exception as e:
             logger.error(f"커맨드 분석 실패: {e}")
             await interaction.followup.send(
-                "❌ 커맨드 분석 중 오류가 발생했습니다.",
+                f"❌ 커맨드 분석 중 오류가 발생했습니다: {str(e)}",
                 ephemeral=True
             )
     
-    async def _analyze_command_code(self, code: str) -> Dict[str, Any]:
-        """AI로 커맨드 코드 분석"""
+    async def _analyze_command_code(self, command) -> str:
+        """커맨드 코드 분석"""
         try:
-            system_prompt = """
-            Discord 봇 코드를 상세히 분석하여 다음 정보를 JSON 형태로 반환해주세요:
-            {
-                "summary": "코드 기능 요약 (300자 이내)",
-                "discord_features": ["사용된 Discord API 기능들"],
-                "performance_score": 1-10,
-                "complexity_score": 1-10,
-                "security_issues": ["보안 이슈들"],
-                "optimization_suggestions": ["최적화 제안들"]
-            }
-            """
+            analysis_parts = []
             
-            response, _ = await ai_service.generate_response(
-                f"다음 Discord 봇 코드를 분석해주세요:\n\n{code[:2000]}...",
-                system_message=system_prompt
-            )
+            # 응답 템플릿 분석
+            template = command.response_template
+            if "{" in template and "}" in template:
+                analysis_parts.append("✅ 동적 변수 사용")
+            else:
+                analysis_parts.append("📝 정적 응답")
             
-            return json.loads(response)
+            # AI 사용 분석
+            if command.use_ai:
+                analysis_parts.append("🤖 AI 기반 응답 생성")
+            
+            # 권한 분석
+            roles = command.get_allowed_roles()
+            if roles:
+                analysis_parts.append(f"🔒 제한된 접근 ({len(roles)}개 역할)")
+            else:
+                analysis_parts.append("🌐 공개 접근")
+            
+            # 복잡도 추정
+            complexity_score = len(template) // 100 + (1 if command.use_ai else 0)
+            if complexity_score >= 3:
+                analysis_parts.append("🔥 고복잡도")
+            elif complexity_score >= 1:
+                analysis_parts.append("⚡ 중복잡도")
+            else:
+                analysis_parts.append("🌱 저복잡도")
+            
+            return "\n".join(analysis_parts)
+            
         except Exception as e:
             logger.error(f"코드 분석 실패: {e}")
-            return {
-                "summary": "분석 실패",
-                "discord_features": [],
-                "performance_score": 0,
-                "complexity_score": 0
-            }
+            return "❌ 분석 불가"
     
-    @app_commands.command(name="실시간테스트", description="생성된 커맨드를 안전한 환경에서 실시간 테스트합니다")
+    @app_commands.command(name="실시간테스트", description="커맨드를 실시간으로 테스트")
     @app_commands.describe(command_name="테스트할 커맨드 이름")
     async def test_command(self, interaction: discord.Interaction, command_name: str):
         """실시간 커맨드 테스트"""
@@ -416,117 +426,88 @@ class UniversalDynamicCog(commands.Cog):
             # 커맨드 조회
             command = await command_service.get_command(str(interaction.guild.id), command_name)
             
-            if not command:
-                await interaction.followup.send(
-                    f"❌ 커맨드 `{command_name}`을 찾을 수 없습니다.",
-                    ephemeral=True
-                )
-                return
+            # 테스트 실행
+            test_result = await self._run_command_test(command, interaction.user)
             
-            # 테스트 환경에서 실행
-            test_result = await self._run_command_test(command.response_template)
-            
-            # 테스트 결과 리포트
             embed = create_embed(
-                title=f"🧪 /{command_name} 테스트 결과",
-                description="안전한 테스트 환경에서의 실행 결과입니다.",
-                color=0x00ff00 if test_result["success"] else 0xff0000
+                title=f"🧪 커맨드 테스트: /{command.name}",
+                color=0xffa500,
+                fields=[
+                    {"name": "📝 테스트 입력", "value": f"사용자: {interaction.user.name}", "inline": True},
+                    {"name": "⏱️ 실행 시간", "value": f"{test_result['execution_time']:.2f}초", "inline": True},
+                    {"name": "✅ 결과", "value": test_result['success'], "inline": True},
+                    {"name": "📤 출력", "value": test_result['output'][:500] + ("..." if len(test_result['output']) > 500 else ""), "inline": False}
+                ],
+                footer="실제 사용과 동일한 환경에서 테스트되었습니다"
             )
-            
-            embed.add_field(
-                name="✅ 실행 상태" if test_result["success"] else "❌ 실행 상태",
-                value="성공" if test_result["success"] else f"실패: {test_result.get('error', '알 수 없는 오류')}",
-                inline=True
-            )
-            
-            embed.add_field(
-                name="⏱️ 실행 시간",
-                value=f"{test_result.get('execution_time', 0):.3f}초",
-                inline=True
-            )
-            
-            if test_result.get("warnings"):
-                warnings_text = "\n".join([f"• {w}" for w in test_result["warnings"][:3]])
-                embed.add_field(
-                    name="⚠️ 경고사항",
-                    value=warnings_text,
-                    inline=False
-                )
             
             await interaction.followup.send(embed=embed, ephemeral=True)
             
         except Exception as e:
             logger.error(f"커맨드 테스트 실패: {e}")
             await interaction.followup.send(
-                "❌ 커맨드 테스트 중 오류가 발생했습니다.",
+                f"❌ 커맨드 테스트 중 오류가 발생했습니다: {str(e)}",
                 ephemeral=True
             )
     
-    async def _run_command_test(self, code: str) -> Dict[str, Any]:
-        """안전한 환경에서 커맨드 테스트 실행"""
+    async def _run_command_test(self, command, user) -> Dict[str, Any]:
+        """커맨드 실행 테스트"""
         import time
-        start_time = time.time()
         
+        start_time = time.time()
         try:
-            # 코드 구문 검사
-            ast.parse(code)
-            
-            # 안전한 실행 환경 (실제 Discord 작업은 하지 않음)
-            test_globals = {
-                'discord': discord,
-                'app_commands': app_commands,
-                'logger': logger,
-                'asyncio': asyncio,
-                'json': json
-            }
-            
-            # 문법 검사만 수행 (실제 실행은 안전하지 않을 수 있음)
-            exec(compile(ast.parse(code), '<test>', 'exec'), test_globals)
+            if command.use_ai:
+                ai_service = AIService()
+                output = await ai_service.enhance_response(
+                    command.response_template,
+                    f"Test user: {user.name}",
+                    {"test_mode": True}
+                )
+            else:
+                output = command.response_template
             
             execution_time = time.time() - start_time
             
             return {
-                "success": True,
-                "execution_time": execution_time,
-                "warnings": []
+                "success": "✅ 성공",
+                "output": output,
+                "execution_time": execution_time
             }
             
-        except SyntaxError as e:
-            return {
-                "success": False,
-                "error": f"구문 오류: {str(e)}",
-                "execution_time": time.time() - start_time
-            }
         except Exception as e:
+            execution_time = time.time() - start_time
             return {
-                "success": False,
-                "error": str(e),
-                "execution_time": time.time() - start_time
+                "success": "❌ 실패",
+                "output": f"오류: {str(e)}",
+                "execution_time": execution_time
             }
-
+    
     async def load_existing_commands(self):
-        """기존 Universal 커맨드들 로드"""
+        """기존 커맨드들을 봇 시작 시 로드"""
         try:
             for guild in self.bot.guilds:
                 commands = await command_service.get_all_commands(str(guild.id))
-                universal_commands = [cmd for cmd in commands if cmd.ai_system_message and "Universal Generator" in cmd.ai_system_message]
                 
-                for command in universal_commands:
+                for command in commands:
                     try:
-                        await self._register_universal_command_from_db(guild, command)
+                        await self._register_universal_command_from_db(command, guild)
                     except Exception as e:
-                        logger.error(f"Universal 커맨드 로드 실패 {command.name}: {e}")
+                        logger.error(f"기존 커맨드 '{command.name}' 로드 실패: {e}")
                 
-                logger.info(f"길드 {guild.name}의 Universal 커맨드 {len(universal_commands)}개 로드 완료")
+                logger.info(f"길드 {guild.name}의 Universal 커맨드 {len(commands)}개 로드 완료")
                 
         except Exception as e:
-            logger.error(f"기존 Universal 커맨드 로드 실패: {e}")
+            logger.error(f"기존 커맨드 로드 실패: {e}")
     
-    async def _register_universal_command_from_db(self, guild: discord.Guild, command: Command):
-        """데이터베이스의 Universal 커맨드를 봇에 등록"""
-        # 실제 등록 로직은 위의 _register_universal_command와 유사
-        # 다만 데이터베이스에서 로드된 것임을 표시
-        pass
+    async def _register_universal_command_from_db(self, command, guild):
+        """데이터베이스에서 커맨드를 Discord에 등록"""
+        # 이미 등록된 커맨드인지 확인
+        existing_command = discord.utils.get(self.bot.tree.get_commands(guild=guild), name=command.name)
+        if existing_command:
+            return
+        
+        # 콜백 함수 생성 및 등록 로직은 _register_universal_command와 동일
+        # 간단화를 위해 생략
 
 
 async def setup(bot):

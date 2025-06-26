@@ -79,8 +79,8 @@ class DiscordBot(commands.Bot):
         logger.info(f"연결된 서버 수: {len(self.guilds)}")
         
         # 길드별 기존 커맨드 로드
-        from src.commands.dynamic import DynamicCommandsCog
-        dynamic_cog = self.get_cog('DynamicCommandsCog')
+        from src.commands.dynamic import UniversalDynamicCog
+        dynamic_cog = self.get_cog('UniversalDynamicCog')
         if dynamic_cog:
             await dynamic_cog.load_existing_commands()
         

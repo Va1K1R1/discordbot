@@ -50,15 +50,15 @@ class DiscordAPIReference:
 
             # 이벤트들
             "events": {
-                "on_ready": "봇이 준비되었을 때",
-                "on_message": "메시지가 전송되었을 때",
-                "on_member_join": "멤버가 서버에 참가했을 때",
-                "on_member_remove": "멤버가 서버에서 나갔을 때",
-                "on_message_delete": "메시지가 삭제되었을 때",
-                "on_message_edit": "메시지가 수정되었을 때",
-                "on_reaction_add": "반응이 추가되었을 때",
-                "on_reaction_remove": "반응이 제거되었을 때",
-                "on_voice_state_update": "음성 상태가 변경되었을 때",
+                "on_ready": "When bot is ready",
+                "on_message": "When a message is sent",
+                "on_member_join": "When member joins the server",
+                "on_member_remove": "When member leaves the server",
+                "on_message_delete": "When a message is deleted",
+                "on_message_edit": "When a message is edited",
+                "on_reaction_add": "When a reaction is added",
+                "on_reaction_remove": "When a reaction is removed",
+                "on_voice_state_update": "When voice state changes",
             },
 
             # 권한 시스템
@@ -85,17 +85,17 @@ class DiscordAPIReference:
                     if inspect.ismethod(method) or inspect.isfunction(method):
                         methods.append({
                             "name": name,
-                            "doc": getattr(method, '__doc__', None) or "메서드"
+                            "doc": getattr(method, '__doc__', None) or "Method"
                         })
                     elif inspect.isdatadescriptor(method):
                         properties.append({
                             "name": name,
-                            "doc": getattr(method, '__doc__', None) or "속성"
+                            "doc": getattr(method, '__doc__', None) or "Property"
                         })
 
             return {
                 "class_name": cls.__name__,
-                "doc": getattr(cls, '__doc__', None) or "클래스",
+                "doc": getattr(cls, '__doc__', None) or "Class",
                 "methods": methods[:10],  # 상위 10개만
                 "properties": properties[:5]  # 상위 5개만
             }
@@ -106,22 +106,22 @@ class DiscordAPIReference:
     def _categorize_features(self) -> Dict[str, List[str]]:
         """기능별 분류"""
         return {
-            "메시지_관련": [
-                "메시지 전송", "메시지 수정", "메시지 삭제", "메시지 고정",
-                "반응 추가", "반응 제거", "메시지 검색"
+            "message_related": [
+                "Send messages", "Edit messages", "Delete messages", "Pin messages",
+                "Add reactions", "Remove reactions", "Search messages"
             ],
-            "사용자_관리": [
-                "멤버 정보", "권한 관리", "역할 부여", "역할 제거",
-                "닉네임 변경", "멤버 킥", "멤버 밴"
+            "user_management": [
+                "Member info", "Permission management", "Role assignment", "Role removal",
+                "Nickname change", "Kick member", "Ban member"
             ],
-            "채널_관리": [
-                "채널 생성", "채널 삭제", "채널 수정", "권한 설정"
+            "channel_management": [
+                "Create channel", "Delete channel", "Edit channel", "Set permissions"
             ],
-            "UI_컴포넌트": [
-                "버튼", "드롭다운", "모달", "임베드", "폼"
+            "ui_components": [
+                "Buttons", "Dropdowns", "Modals", "Embeds", "Forms"
             ],
-            "실시간_기능": [
-                "이벤트 리스너", "음성 처리", "실시간 알림"
+            "realtime_features": [
+                "Event listeners", "Voice processing", "Real-time notifications"
             ]
         }
 
@@ -173,28 +173,28 @@ class UniversalDiscordGenerator:
         """Discord 기능 필요도 분석"""
 
         system_prompt = f"""
-        Discord 봇 개발 전문가로서 사용자 요청을 분석하여 필요한 Discord API 기능들을 식별해주세요.
+        As a Discord bot development expert, analyze the user request to identify the required Discord API features.
         
-        사용 가능한 Discord API 카테고리:
+        Available Discord API categories:
         {json.dumps(self.api_ref.available_features, ensure_ascii=False, indent=2)}
         
-        다음 JSON 형태로 분석 결과를 반환해주세요:
+        Return the analysis result in the following JSON format:
         {{
-            "primary_features": ["주요 기능1", "주요 기능2"],
-            "secondary_features": ["보조 기능1", "보조 기능2"],
-            "ui_components": ["필요한 UI 컴포넌트들"],
-            "events_needed": ["필요한 이벤트 리스너들"],
-            "permissions_required": ["필요한 권한들"],
+            "primary_features": ["main feature 1", "main feature 2"],
+            "secondary_features": ["secondary feature 1", "secondary feature 2"],
+            "ui_components": ["required UI components"],
+            "events_needed": ["required event listeners"],
+            "permissions_required": ["required permissions"],
             "complexity": 1-10,
-            "estimated_lines": 예상_코드_라인_수,
+            "estimated_lines": estimated_code_lines,
             "api_coverage": {{
                 "core": 0-100,
                 "ui": 0-100,
                 "events": 0-100,
                 "advanced": 0-100
             }},
-            "features_used": ["사용될 Discord 클래스/메서드들"],
-            "requirements": ["추가 라이브러리나 설정"]
+            "features_used": ["Discord classes/methods to be used"],
+            "requirements": ["additional libraries or configurations"]
         }}
         """
 
@@ -211,29 +211,29 @@ class UniversalDiscordGenerator:
         """완전한 Discord API 컨텍스트 구축"""
 
         context = f"""
-        === Discord API 완전 레퍼런스 ===
+        === Complete Discord API Reference ===
         
-        요청된 기능 분석:
+        Requested feature analysis:
         {json.dumps(feature_analysis, ensure_ascii=False, indent=2)}
         
-        === 사용 가능한 모든 Discord 클래스 ===
+        === Available Discord Classes ===
         """
 
         # 핵심 클래스들 추가
         for class_name, class_info in self.api_ref.api_reference["core_classes"].items():
             context += f"\n## {class_name}\n"
-            context += f"설명: {class_info['doc']}\n"
-            context += "주요 메서드:\n"
+            context += f"Description: {class_info['doc']}\n"
+            context += "Main methods:\n"
             for method in class_info["methods"][:3]:  # 상위 3개만
                 context += f"  - {method['name']}: {method['doc']}\n"
 
         # UI 컴포넌트들 추가
-        context += "\n=== UI 컴포넌트들 ===\n"
+        context += "\n=== UI Components ===\n"
         for ui_name, ui_info in self.api_ref.api_reference["ui_components"].items():
             context += f"- {ui_name}: {ui_info['doc']}\n"
 
         # 이벤트들 추가
-        context += "\n=== 사용 가능한 이벤트들 ===\n"
+        context += "\n=== Available Events ===\n"
         for event_name, event_desc in self.api_ref.api_reference["events"].items():
             context += f"- {event_name}: {event_desc}\n"
 
@@ -249,34 +249,34 @@ class UniversalDiscordGenerator:
         """고급 Discord 코드 생성"""
 
         system_prompt = f"""
-        당신은 Discord API의 모든 기능을 완벽하게 활용할 수 있는 전문 개발자입니다.
-        사용자의 요청에 따라 Discord API의 모든 클래스, 메서드, 이벤트를 자유롭게 조합하여 코드를 생성해주세요.
+        You are an expert developer who can perfectly utilize all Discord API features.
+        Generate code by freely combining all Discord API classes, methods, and events according to the user's request.
         
         {discord_context}
         
-        코드 생성 가이드라인:
-        1. 복잡도 수준: {complexity_level}
-        2. 실험적 기능 사용: {use_experimental}
-        3. 모든 Discord API 기능을 적극 활용
-        4. 에러 처리 및 로깅 포함
-        5. 완전한 기능 구현
+        Code generation guidelines:
+        1. Complexity level: {complexity_level}
+        2. Use experimental features: {use_experimental}
+        3. Actively utilize all Discord API features
+        4. Include error handling and logging
+        5. Complete functional implementation
         
-        반드시 실행 가능한 Python 함수 형태로 생성해주세요:
+        Generate code in the form of an executable Python function:
         
         async def generated_function(interaction: discord.Interaction, user_input: str = ""):
-            \"\"\"생성된 함수 설명\"\"\"
+            \"\"\"Generated function description\"\"\"
             try:
-                # 여기에 실제 구현 코드
-                await interaction.response.send_message("✅ 실행 완료!")
+                # Actual implementation code here
+                await interaction.response.send_message("✅ Execution completed!")
             except Exception as e:
-                logger.error(f"오류: {{e}}")
+                logger.error(f"Error: {{e}}")
                 if not interaction.response.is_done():
-                    await interaction.response.send_message(f"❌ 오류: {{e}}", ephemeral=True)
+                    await interaction.response.send_message(f"❌ Error: {{e}}", ephemeral=True)
         """
 
         try:
             response, _ = await ai_service.generate_response(
-                f"사용자 요청: {request}\n\n위의 Discord API 정보를 활용하여 완전한 코드를 생성해주세요.",
+                f"User request: {request}\n\nPlease generate complete code using the Discord API information above.",
                 system_message=system_prompt
             )
             return response
@@ -293,23 +293,23 @@ class UniversalDiscordGenerator:
 
         try:
             system_prompt = """
-            Discord 봇 기능을 더욱 발전시킬 수 있는 향상 기능들을 제안해주세요.
-            각 제안은 한 줄로 간단하고 구체적이어야 합니다.
+            Suggest enhancement features that can further improve Discord bot functionality.
+            Each suggestion should be simple and specific in one line.
             """
 
             response, _ = await ai_service.generate_response(
-                f"원본 요청: {request}",
+                f"Original request: {request}",
                 system_message=system_prompt
             )
             return response.split('\n')[:5]  # 최대 5개
         except Exception as e:
             logger.error(f"향상 제안 실패: {e}")
-            return ["기본 로깅 추가", "에러 처리 강화", "성능 모니터링"]
+            return ["Add basic logging", "Enhance error handling", "Performance monitoring"]
 
     def _get_fallback_analysis(self) -> Dict[str, Any]:
         """기본 분석 결과"""
         return {
-            "primary_features": ["기본 메시지"],
+            "primary_features": ["Basic messaging"],
             "secondary_features": [],
             "ui_components": [],
             "events_needed": [],
@@ -326,24 +326,24 @@ class UniversalDiscordGenerator:
         return f'''
 async def generated_function(interaction: discord.Interaction, user_input: str = ""):
     """
-    요청: {request}
-    기본 응답 함수입니다.
+    Request: {request}
+    This is a basic response function.
     """
     try:
         embed = discord.Embed(
-            title="✅ AI 생성 커맨드",
-            description=f"요청: {request}\\n\\n이 커맨드가 성공적으로 실행되었습니다!",
+            title="✅ AI Generated Command",
+            description=f"Request: {request}\\n\\nThis command has been executed successfully!",
             color=0x00ff00
         )
-        embed.add_field(name="입력값", value=user_input or "없음", inline=True)
+        embed.add_field(name="Input", value=user_input or "None", inline=True)
         embed.set_footer(text="Universal AI Generator")
         
         await interaction.response.send_message(embed=embed)
         
     except Exception as e:
-        logger.error(f"커맨드 실행 오류: {{e}}")
+        logger.error(f"Command execution error: {{e}}")
         if not interaction.response.is_done():
-            await interaction.response.send_message(f"❌ 오류가 발생했습니다: {{e}}", ephemeral=True)
+            await interaction.response.send_message(f"❌ An error occurred: {{e}}", ephemeral=True)
         '''
 
     def _get_fallback_result(self, request: str) -> Dict[str, Any]:
@@ -353,7 +353,7 @@ async def generated_function(interaction: discord.Interaction, user_input: str =
             "feature_analysis": self._get_fallback_analysis(),
             "discord_features_used": ["discord.Interaction", "discord.Embed"],
             "complexity_score": 3,
-            "enhancement_suggestions": ["기본 기능 확장", "UI 개선", "에러 처리 강화"],
+            "enhancement_suggestions": ["Extend basic features", "Improve UI", "Enhance error handling"],
             "api_coverage": {"core": 30, "ui": 10, "events": 0, "advanced": 0},
             "execution_requirements": []
         }
