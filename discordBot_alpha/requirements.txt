@@ -1,0 +1,25 @@
+# Discord Bot Dependencies
+
+# Core
+discord.py>=2.3.2
+python-dotenv>=1.0.0
+
+# Database
+mysql-connector-python>=8.1.0
+
+# Utilities
+aiofiles>=23.1.0
+asyncio>=3.4.3
+schedule>=1.2.0
+python-dateutil>=2.8.2
+
+# System Monitoring (for Raspberry Pi optimization)
+psutil>=5.9.0
+
+# Optional Dependencies
+# For advanced logging
+colorlog>=6.7.0
+# For web dashboard (if implemented)
+# flask>=2.2.0
+# For better performance
+# ujson>=5.4.0

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-functional Discord Bot Project Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Multi-functional Discord Bot</h1>
+            <p class="subtitle">Integrated Server Management Solution</p>
+        </div>
+    </header>
+
+    <nav id="main-nav">
+        <div class="container">
+            <button id="menu-toggle" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul id="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#database">Database</a></li>
+                <li><a href="#permissions">Permissions</a></li>
+                <li><a href="#points">Points</a></li>
+                <li><a href="#messages">Messages</a></li>
+                <li><a href="#logging">Logging</a></li>
+                <li><a href="#technical">Technical</a></li>
+                <li><a href="#development">Development</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <section id="overview" class="section">
+                <h2>Project Overview</h2>
+                <div class="card">
+                    <h3>Background & Objectives</h3>
+                    <p>Development of a comprehensive bot solution for Discord server management with advanced features for permission control, user engagement, and content moderation.</p>
+                    
+                    <h3>Technology Stack</h3>
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <i class="fab fa-python"></i>
+                            <span>Python 3.8+</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fab fa-discord"></i>
+                            <span>discord.py 2.3.2+</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-database"></i>
+                            <span>MySQL</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>asyncio</span>
+                        </div>
+                    </div>
+                    
+                    <h3>Development Methodology</h3>
+                    <p>The project follows a modular design approach with object-oriented programming principles, allowing for easy extension and maintenance of the codebase.</p>
+                </div>
+            </section>
+
+            <section id="architecture" class="section">
+                <h2>System Architecture</h2>
+                <div class="card">
+                    <div class="architecture-diagram">
+                        <!-- Placeholder for architecture diagram -->
+                        <div class="diagram-placeholder">
+                            <i class="fas fa-project-diagram"></i>
+                            <p>System Architecture Diagram</p>
+                        </div>
+                    </div>
+                    
+                    <div class="two-column">
+                        <div>
+                            <h3>Core Components</h3>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-cog"></i> Bot core (main.py)</li>
+                                <li><i class="fas fa-puzzle-piece"></i> Modular Cogs structure</li>
+                                <li><i class="fas fa-database"></i> Database connection</li>
+                                <li><i class="fas fa-tools"></i> Utility modules</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Event Handling Model</h3>
+                            <p>The bot utilizes Discord.py's event-driven architecture with asynchronous programming to handle multiple events concurrently without blocking the main execution thread.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="directory-structure">
+                        <h3>Directory Structure</h3>
+                        <pre><code class="language-plaintext">
+discord_bot/
+├── main.py                 # Main execution file
+├── config/
+│   ├── settings.py         # Configuration management
+│   └── database.py         # DB connection settings
+├── cogs/                   # Feature modules
+│   ├── permissions.py      # Permission management
+│   ├── points.py           # Point system
+│   ├── message_manager.py  # Message management
+│   └── logging_system.py   # Logging system
+├── utils/
+│   ├── helpers.py          # Helper functions
+│   └── decorators.py       # Decorators
+├── database/
+│   ├── models.py           # Database models
+│   └── migrations.sql      # Initial DB schema
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="database" class="section">
+                <h2>Database Design</h2>
+                <div class="card">
+                    <div class="er-diagram">
+                        <!-- Placeholder for ER diagram -->
+                        <div class="diagram-placeholder">
+                            <i class="fas fa-database"></i>
+                            <p>Entity Relationship Diagram</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Main Tables</h3>
+                    <div class="table-list">
+                        <div class="table-item">
+                            <h4>user_points</h4>
+                            <p>Stores user points and level information</p>
+                        </div>
+                        <div class="table-item">
+                            <h4>point_transactions</h4>
+                            <p>Records point transaction history</p>
+                        </div>
+                        <div class="table-item">
+                            <h4>scheduled_deletions</h4>
+                            <p>Manages scheduled message deletions</p>
+                        </div>
+                        <div class="table-item">
+                            <h4>message_logs</h4>
+                            <p>Stores message history and content</p>
+                        </div>
+                        <div class="table-item">
+                            <h4>server_settings</h4>
+                            <p>Maintains server configuration</p>
+                        </div>
+                        <div class="table-item">
+                            <h4>user_permissions</h4>
+                            <p>Defines user permission levels</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Optimization Strategies</h3>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-tachometer-alt"></i> Strategic indexing on frequently queried columns</li>
+                        <li><i class="fas fa-compress-arrows-alt"></i> Efficient relationship design to minimize joins</li>
+                        <li><i class="fas fa-clock"></i> Timestamp fields for tracking and cleanup operations</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="permissions" class="section">
+                <h2>Permission Management System</h2>
+                <div class="card">
+                    <div class="permission-hierarchy">
+                        <h3>Hierarchical Permission Structure</h3>
+                        <div class="hierarchy-diagram">
+                            <div class="level level-5">OWNER</div>
+                            <div class="level level-4">ADMIN</div>
+                            <div class="level level-3">MODERATOR</div>
+                            <div class="level level-2">TRUSTED</div>
+                            <div class="level level-1">MEMBER</div>
+                            <div class="level level-0">RESTRICTED</div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-column">
+                        <div>
+                            <h3>Key Features</h3>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-shield-alt"></i> Role-based permission assignment</li>
+                                <li><i class="fas fa-check-circle"></i> Command access control via decorators</li>
+                                <li><i class="fas fa-user-shield"></i> Permission verification mechanism</li>
+                                <li><i class="fas fa-user-cog"></i> Permission management commands</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Implementation</h3>
+                            <p>The permission system uses a combination of Discord's built-in role system and custom permission levels to provide granular access control to bot commands and features.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="code-example">
+                        <h3>Permission Check Decorator</h3>
+                        <pre><code class="language-python">
+# from functools import wraps
+# import discord
+# from utils.permissions import PermissionLevel, PermissionChecker
+
+def require_permission(level: PermissionLevel):
+    """
+    Decorator for commands that checks if the user has the required permission level.
+    """
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(self, ctx, *args, **kwargs):
+            if not await PermissionChecker.check_permission(ctx.author, level):
+                embed = discord.Embed(
+                    title="❌ Insufficient Permission",
+                    description=f"You need {level.name} permission to use this command.",
+                    color=discord.Color.red()
+                )
+                await ctx.send(embed=embed)
+                return
+            return await func(self, ctx, *args, **kwargs)
+        return wrapper
+    return decorator
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="points" class="section">
+                <h2>Point System</h2>
+                <div class="card">
+                    <div class="two-column">
+                        <div>
+                            <h3>Point Acquisition</h3>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-comment"></i> Message-based points</li>
+                                <li><i class="fas fa-microphone"></i> Voice activity rewards</li>
+                                <li><i class="fas fa-calendar-check"></i> Daily bonus system</li>
+                                <li><i class="fas fa-thumbs-up"></i> Reaction-based points</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Level System</h3>
+                            <p>Users gain experience points through server activity, which automatically converts to levels based on a progressive scale. Higher levels unlock special privileges and recognition.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ui-example">
+                        <h3>Point System UI</h3>
+                        <div class="discord-embed">
+                            <div class="embed-title">📊 Point Information</div>
+                            <div class="embed-fields">
+                                <div class="embed-field"><span>Current Points:</span> 1,250</div>
+                                <div class="embed-field"><span>Total Earned:</span> 2,500</div>
+                                <div class="embed-field"><span>Total Spent:</span> 1,250</div>
+                                <div class="embed-field"><span>Level:</span> 5</div>
+                            </div>
+                            <div class="embed-footer">Requested by User#1234</div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-example">
+                        <h3>Message-based Point Acquisition</h3>
+                        <pre><code class="language-python">
+# from discord.ext import commands
+# from datetime import datetime, timedelta
+
+@commands.Cog.listener()
+async def on_message(self, message):
+    """Message-based point accumulation"""
+    if message.author.bot:
+        return
+        
+    user_id = message.author.id
+    current_time = datetime.now()
+    
+    # Cooldown check (accumulate only once per minute)
+    if user_id in self.message_cooldown:
+        if current_time - self.message_cooldown[user_id] < timedelta(minutes=1):
+            return
+    
+    self.message_cooldown[user_id] = current_time
+    
+    # Add points
+    await self.add_points(user_id, self.point_rates['message'], "Message sent")
+    
+    # Experience system (level-up check)
+    await self.check_level_up(user_id)
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="messages" class="section">
+                <h2>Message Management</h2>
+                <div class="card">
+                    <div class="two-column">
+                        <div>
+                            <h3>Key Features</h3>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-clock"></i> Scheduled message deletion</li>
+                                <li><i class="fas fa-broom"></i> Bulk message deletion (cleanup)</li>
+                                <li><i class="fas fa-user-times"></i> User-specific message deletion</li>
+                                <li><i class="fas fa-tasks"></i> Asynchronous task scheduling</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Implementation</h3>
+                            <p>The message management system uses Discord.py's tasks and asynchronous capabilities to schedule and execute message deletions efficiently without blocking the bot's main functionality.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ui-example">
+                        <h3>Message Management UI</h3>
+                        <div class="discord-embed">
+                            <div class="embed-title">⏰ Message Deletion Scheduled</div>
+                            <div class="embed-description">Message will be deleted in 30 minutes.</div>
+                            <div class="embed-fields">
+                                <div class="embed-field"><span>Deletion Time:</span> 2025-07-24 16:10:00</div>
+                                <div class="embed-field"><span>Reason:</span> Scheduled deletion</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-example">
+                        <h3>Scheduled Message Deletion Feature</h3>
+                        <pre><code class="language-python">
+# from discord.ext import tasks
+# from datetime import datetime
+# from database.models import ScheduledDeletionModel
+
+@tasks.loop(minutes=1)
+async def deletion_checker(self):
+    """Check scheduled deletion tasks"""
+    current_time = datetime.now()
+    
+    try:
+        # Query messages to delete from database
+        deletions = await ScheduledDeletionModel.get_pending_deletions(self.bot.db, current_time)
+        
+        for deletion in deletions:
+            await self.process_scheduled_deletion(deletion)
+    except Exception as e:
+        self.bot.logger.error(f"Error in deletion checker: {e}", exc_info=True)
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="logging" class="section">
+                <h2>Logging System</h2>
+                <div class="card">
+                    <div class="two-column">
+                        <div>
+                            <h3>Logging Features</h3>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-file-alt"></i> Message logging (create, edit, delete)</li>
+                                <li><i class="fas fa-user-plus"></i> Member event logging (join, leave)</li>
+                                <li><i class="fas fa-search"></i> Log search functionality</li>
+                                <li><i class="fas fa-cog"></i> Configurable log channels</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Implementation</h3>
+                            <p>The logging system captures Discord events in real-time and stores them in both a dedicated database table and a designated logging channel for easy review by server administrators.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ui-example">
+                        <h3>Logging System UI</h3>
+                        <div class="discord-embed discord-embed-red">
+                            <div class="embed-title">🗑️ Message Deleted</div>
+                            <div class="embed-description">This is an example of deleted message content</div>
+                            <div class="embed-fields">
+                                <div class="embed-field"><span>Channel:</span> #general</div>
+                                <div class="embed-field"><span>Message ID:</span> 123456789012345678</div>
+                            </div>
+                            <div class="embed-author">
+                                <span>Username#1234</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-example">
+                        <h3>Message Deletion Logging</h3>
+                        <pre><code class="language-python">
+# from discord.ext import commands
+# import discord
+# from datetime import datetime
+
+@commands.Cog.listener()
+async def on_message_delete(self, message):
+    """Message deletion logging"""
+    if message.author.bot:
+        return
+        
+    # Send deletion information to log channel
+    if self.bot.log_channel:
+        embed = discord.Embed(
+            title="🗑️ Message Deleted",
+            description=message.content[:1000] if message.content else "*No content*",
+            color=discord.Color.red(),
+            timestamp=datetime.now()
+        )
+        embed.set_author(
+            name=f"{message.author.display_name} ({message.author})",
+            icon_url=message.author.avatar.url if message.author.avatar else None
+        )
+        embed.add_field(name="Channel", value=message.channel.mention, inline=True)
+        embed.add_field(name="Message ID", value=message.id, inline=True)
+        
+        await self.bot.log_channel.send(embed=embed)
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="technical" class="section">
+                <h2>Technical Highlights</h2>
+                <div class="card">
+                    <div class="tech-highlights">
+                        <div class="tech-highlight">
+                            <i class="fas fa-sync-alt"></i>
+                            <h3>Asynchronous Programming</h3>
+                            <p>Utilizes Python's asyncio library for non-blocking operations, allowing the bot to handle multiple tasks concurrently.</p>
+                        </div>
+                        <div class="tech-highlight">
+                            <i class="fas fa-recycle"></i>
+                            <h3>Code Reuse via Decorators</h3>
+                            <p>Implements custom decorators for permission checking, error handling, and cooldown management to reduce code duplication.</p>
+                        </div>
+                        <div class="tech-highlight">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>Input Validation & Security</h3>
+                            <p>Robust input validation and sanitization to prevent injection attacks and ensure data integrity.</p>
+                        </div>
+                        <div class="tech-highlight">
+                            <i class="fas fa-database"></i>
+                            <h3>Database Optimization</h3>
+                            <p>Strategic indexing, query optimization, and connection pooling to ensure efficient database operations.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="code-example">
+                        <h3>Error Handling Implementation</h3>
+                        <pre><code class="language-python">
+def error_handler(func):
+    """
+    Decorator that handles common errors for commands.
+    """
+    @wraps(func)
+    async def wrapper(self, ctx, *args, **kwargs):
+        try:
+            return await func(self, ctx, *args, **kwargs)
+        except commands.MissingRequiredArgument as e:
+            # Missing argument
+            embed = discord.Embed(
+                title="❓ Missing Argument",
+                description=f"Required argument missing: {e.param.name}",
+                color=discord.Color.yellow()
+            )
+            embed.add_field(
+                name="Usage", 
+                value=f"`{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`",
+                inline=False
+            )
+            await ctx.send(embed=embed)
+        except Exception as e:
+            # Log the error
+            self.bot.logger.error(f"Command error in {ctx.command}: {e}", exc_info=True)
+            # Notify user
+            await ctx.send(f"An error occurred: {str(e)}")
+    return wrapper
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="development" class="section">
+                <h2>Development Process & Challenges</h2>
+                <div class="card">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h3>Phase 1: Core Infrastructure</h3>
+                                <p>Setting up the bot framework, database connections, and basic command structure.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h3>Phase 2: Permission System</h3>
+                                <p>Implementing hierarchical permissions and role-based access control.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h3>Phase 3: Feature Implementation</h3>
+                                <p>Developing the points system, message management, and logging functionality.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h3>Phase 4: Testing & Optimization</h3>
+                                <p>Comprehensive testing, performance optimization, and bug fixing.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="challenges">
+                        <h3>Key Challenges</h3>
+                        <div class="challenge-item">
+                            <h4>Asynchronous Programming Complexity</h4>
+                            <p>Managing concurrent operations and ensuring proper error handling in asynchronous code.</p>
+                            <p><strong>Solution:</strong> Implemented structured error handling and utilized asyncio's task management.</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>Database Performance</h4>
+                            <p>Ensuring efficient database operations with growing data volume.</p>
+                            <p><strong>Solution:</strong> Optimized queries, implemented strategic indexing, and used connection pooling.</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>Discord API Rate Limits</h4>
+                            <p>Managing Discord API rate limits during bulk operations.</p>
+                            <p><strong>Solution:</strong> Implemented throttling mechanisms and batch processing for API calls.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>Conclusion & Demonstration</h2>
+                <div class="card">
+                    <div class="project-summary">
+                        <h3>Project Summary</h3>
+                        <p>This Discord bot project demonstrates a comprehensive server management solution with advanced features for permission control, user engagement through a points system, message management, and detailed logging capabilities.</p>
+                        
+                        <h3>Key Achievements</h3>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Implemented a scalable, modular architecture</li>
+                            <li><i class="fas fa-check-circle"></i> Created a flexible permission system</li>
+                            <li><i class="fas fa-check-circle"></i> Developed an engaging user points and leveling system</li>
+                            <li><i class="fas fa-check-circle"></i> Built robust message management tools</li>
+                            <li><i class="fas fa-check-circle"></i> Established comprehensive logging for server activities</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="demo-section">
+                        <h3>Demonstration</h3>
+                        <div class="video-container">
+                            <!-- Placeholder for demo video or screenshots -->
+                            <div class="demo-placeholder">
+                                <i class="fas fa-play-circle"></i>
+                                <p>Bot Demonstration Video</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="future-plans">
+                        <h3>Future Development</h3>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-lightbulb"></i> Web dashboard for bot management</li>
+                            <li><i class="fas fa-chart-line"></i> Advanced analytics and reporting</li>
+                            <li><i class="fas fa-robot"></i> AI-powered moderation features</li>
+                            <li><i class="fas fa-globe"></i> Multi-language support</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <h3>Contact Information</h3>
+                        <div class="contact-links">
+                            <a href="#" class="contact-link"><i class="fab fa-github"></i> GitHub</a>
+                            <a href="#" class="contact-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                            <a href="#" class="contact-link"><i class="fas fa-envelope"></i> Email</a>
+                            <a href="#" class="contact-link"><i class="fab fa-discord"></i> Discord</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Discord Bot Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
