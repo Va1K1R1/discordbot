@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>pydeck</title>
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <script src='https://cdn.jsdelivr.net/npm/@deck.gl/jupyter-widget@~8.8.*/dist/index.js'></script>
+    <style>
+    body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#deck-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#deck-container canvas {
+  z-index: 1;
+  background: none;
+}
+    </style>
+  </head>
+  <body>
+    <div id="deck-container">
+    </div>
+  </body>
+  <script>
+    const container = document.getElementById('deck-container');
+    const jsonInput = {
+  "initialViewState": {
+    "bearing": 0,
+    "latitude": 37.5665,
+    "longitude": 126.978,
+    "pitch": 50,
+    "zoom": 10.5
+  },
+  "layers": [
+    {
+      "@@type": "ColumnLayer",
+      "autoHighlight": true,
+      "data": [
+        {
+          "height": 1393.129106272074,
+          "hour": 23,
+          "lat": 37.5689263,
+          "lon": 126.8607058,
+          "name": "\uac00\uc591\ub300\uad50",
+          "traffic": 1564.851392309636
+        },
+        {
+          "height": 722.01797136224,
+          "hour": 23,
+          "lat": 37.4680811,
+          "lon": 127.0036524,
+          "name": "\uac15\ub0a8\uc21c\ud658\ub85c",
+          "traffic": 853.5832240088372
+        },
+        {
+          "height": 366.71063091869877,
+          "hour": 23,
+          "lat": 37.5746241,
+          "lon": 127.1637527,
+          "name": "\uac15\ub3d9\ub300\uad50",
+          "traffic": 477.01548719865974
+        },
+        {
+          "height": 1609.5704323915472,
+          "hour": 23,
+          "lat": 37.5434964,
+          "lon": 127.025973,
+          "name": "\uac15\ubcc0\ubd81\ub85c",
+          "traffic": 1794.243839499887
+        },
+        {
+          "height": 2169.5009784317726,
+          "hour": 23,
+          "lat": 37.4621869,
+          "lon": 127.041297,
+          "name": "\uacbd\ubd80\uace0\uc18d\ub3c4\ub85c",
+          "traffic": 2387.6787463893465
+        },
+        {
+          "height": 1737.6244373522713,
+          "hour": 23,
+          "lat": 37.5050827,
+          "lon": 127.0049777,
+          "name": "\uace0\uc18d\ud130\ubbf8\ub110",
+          "traffic": 1929.9601654765563
+        },
+        {
+          "height": 200.0,
+          "hour": 23,
+          "lat": 37.544914,
+          "lon": 127.1127811,
+          "name": "\uad11\uc9c4\uad50",
+          "traffic": 300.3294527675004
+        },
+        {
+          "height": 593.23366226353,
+          "hour": 23,
+          "lat": 37.609427,
+          "lon": 126.9514324,
+          "name": "\uad6c\uae30\ud130\ub110",
+          "traffic": 717.0928949505508
+        },
+        {
+          "height": 1038.6175082240256,
+          "hour": 23,
+          "lat": 37.5504306,
+          "lon": 127.0140092,
+          "name": "\uae08\ud638\ud130\ub110",
+          "traffic": 1189.1270124438452
+        },
+        {
+          "height": 1080.5209742934344,
+          "hour": 23,
+          "lat": 37.5476825,
+          "lon": 126.9979875,
+          "name": "\ub0a8\uc0b01\ud638\ud130\ub110",
+          "traffic": 1233.5378410030337
+        },
+        {
+          "height": 232.5772948589756,
+          "hour": 23,
+          "lat": 37.5499528,
+          "lon": 126.9954398,
+          "name": "\ub0a8\uc0b02\ud638\ud130\ub110",
+          "traffic": 334.85606339459383
+        },
+        {
+          "height": 427.5103199985249,
+          "hour": 23,
+          "lat": 37.5514979,
+          "lon": 126.9848595,
+          "name": "\ub0a8\uc0b03\ud638\ud130\ub110",
+          "traffic": 541.4532252059066
+        },
+        {
+          "height": 895.7712043944043,
+          "hour": 23,
+          "lat": 37.5357931,
+          "lon": 127.0214435,
+          "name": "\ub3d9\ud638\ub300\uad50",
+          "traffic": 1037.7332661799203
+        },
+        {
+          "height": 1261.1938363561949,
+          "hour": 23,
+          "lat": 37.5335537,
+          "lon": 126.9363748,
+          "name": "\ub9c8\ud3ec\ub300\uad50",
+          "traffic": 1425.021559535446
+        },
+        {
+          "height": 1312.7201084660317,
+          "hour": 23,
+          "lat": 37.514556,
+          "lon": 126.9965074,
+          "name": "\ubc18\ud3ec\ub300\uad50",
+          "traffic": 1479.6309904873792
+        },
+        {
+          "height": 238.48407064668987,
+          "hour": 23,
+          "lat": 37.5876216,
+          "lon": 126.8257167,
+          "name": "\ubc29\ud654\ub300\uad50",
+          "traffic": 341.1162807811754
+        },
+        {
+          "height": 1610.799101553363,
+          "hour": 23,
+          "lat": 37.61057,
+          "lon": 127.117958,
+          "name": "\ubd81\ubd80\uac04\uc120\ub85c",
+          "traffic": 1795.5460280923764
+        },
+        {
+          "height": 434.7290776352229,
+          "hour": 23,
+          "lat": 37.6115777,
+          "lon": 126.9850339,
+          "name": "\ubd81\uc545\ud130\ub110",
+          "traffic": 549.1039290231685
+        },
+        {
+          "height": 2182.9156416852848,
+          "hour": 23,
+          "lat": 37.5692933,
+          "lon": 126.8981166,
+          "name": "\uc131\uc0b0\ub300\uad50",
+          "traffic": 2401.89609797893
+        },
+        {
+          "height": 1897.6900557664665,
+          "hour": 23,
+          "lat": 37.5445962,
+          "lon": 127.0377264,
+          "name": "\uc131\uc218\ub300\uad50",
+          "traffic": 2099.603572201875
+        },
+        {
+          "height": 1920.0631985076607,
+          "hour": 23,
+          "lat": 37.5373399,
+          "lon": 126.9045132,
+          "name": "\uc591\ud654\ub300\uad50",
+          "traffic": 2123.315448564647
+        },
+        {
+          "height": 1581.2385635871183,
+          "hour": 23,
+          "lat": 37.5184722,
+          "lon": 127.0521667,
+          "name": "\uc601\ub3d9\ub300\uad50",
+          "traffic": 1764.2166869452326
+        },
+        {
+          "height": 552.5723105751529,
+          "hour": 23,
+          "lat": 37.5286111,
+          "lon": 126.9411111,
+          "name": "\uc6d0\ud6a8\ub300\uad50",
+          "traffic": 673.9985047197699
+        },
+        {
+          "height": 1266.583754371208,
+          "hour": 23,
+          "lat": 37.5297222,
+          "lon": 127.0861111,
+          "name": "\uc7a0\uc2e4\ub300\uad50",
+          "traffic": 1430.7339921183818
+        },
+        {
+          "height": 1526.27642344265,
+          "hour": 23,
+          "lat": 37.5208333,
+          "lon": 127.0647222,
+          "name": "\uccad\ub2f4\ub300\uad50",
+          "traffic": 1705.9657971701731
+        },
+        {
+          "height": 1367.8691314341554,
+          "hour": 23,
+          "lat": 37.5144444,
+          "lon": 126.9658333,
+          "name": "\ud55c\uac15\ub300\uad50",
+          "traffic": 1538.0799455257816
+        },
+        {
+          "height": 2200.0,
+          "hour": 23,
+          "lat": 37.5319444,
+          "lon": 127.0136111,
+          "name": "\ud55c\ub0a8\ub300\uad50",
+          "traffic": 2420.00272684113
+        },
+        {
+          "height": 710.6671059759868,
+          "hour": 23,
+          "lat": 37.5965,
+          "lon": 126.8325,
+          "name": "\ud589\uc8fc\ub300\uad50",
+          "traffic": 841.553161010413
+        }
+      ],
+      "elevationScale": 1,
+      "getElevation": "@@=height",
+      "getFillColor": "@@=[traffic * 255 / 2420.00272684113, 255 * (1 - traffic / 2420.00272684113), 0, 200]",
+      "getPosition": "@@=[lon, lat]",
+      "id": "92f9e718-bbb9-4842-90bc-a80fc9023d94",
+      "pickable": true,
+      "radius": 150
+    }
+  ],
+  "mapProvider": "carto",
+  "mapStyle": "mapbox://styles/mapbox/light-v9",
+  "views": [
+    {
+      "@@type": "MapView",
+      "controller": true
+    }
+  ]
+};
+    const tooltip = {'html': '<b>{name}</b><br/>시간: 23시<br/>교통량: {traffic}<br/>위치: ({lat:.4f}, {lon:.4f})', 'style': {'backgroundColor': 'steelblue', 'color': 'white', 'fontSize': '12px'}};
+    const customLibraries = [{'libraryName': 'MyMapboxLibrary', 'resourceUri': 'https://api.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js?access_token=pk.eyJ1IjoidmExazFyMSIsImEiOiJjbWQ4OHNsdzQwamlmMm1wdHNneHBvMWE3In0.JvwNZtxoclNCSXJQS6Qa2w'}];
+    const configuration = null;
+
+    const deckInstance = createDeck({
+                  container,
+      jsonInput,
+      tooltip,
+      customLibraries,
+      configuration
+    });
+
+  </script>
+</html>

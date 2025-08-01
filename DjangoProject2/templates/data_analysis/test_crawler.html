@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>크롤러 테스트</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .result.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .movie-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            min-width: 150px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 영화 크롤러 테스트</h1>
+
+        <!-- 영화 크롤링 섹션 -->
+        <div class="section">
+            <h2>네이버 영화 크롤링</h2>
+            <div class="form-group">
+                <label for="max_movies">최대 수집 영화 수:</label>
+                <input type="number" id="max_movies" value="20" min="1" max="100">
+            </div>
+            <div class="form-group">
+                <label for="crawler_type">크롤러 유형:</label>
+                <select id="crawler_type">
+                    <option value="naver">네이버 영화만</option>
+                    <option value="cgv">CGV만</option>
+                    <option value="all">모두</option>
+                </select>
+            </div>
+            <button id="crawl_btn" onclick="startCrawling()">크롤링 시작</button>
+            <button id="clear_btn" onclick="clearData()" class="btn-danger">데이터 초기화</button>
+            <button onclick="loadMovieData()">데이터 새로고침</button>
+
+            <div class="status">
+                <div class="spinner" id="spinner"></div>
+                <span id="status_text">준비됨</span>
+            </div>
+
+            <div id="crawl_result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 영화 통계 섹션 -->
+        <div class="section">
+            <h2>영화 데이터 통계</h2>
+            <div class="movie-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="total_movies">0</div>
+                    <div class="stat-label">총 영화 수</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="avg_rating">0.0</div>
+                    <div class="stat-label">평균 평점</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="total_genres">0</div>
+                    <div class="stat-label">장르 수</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 동적 크롤링 섹션 -->
+        <div class="section">
+            <h2>동적 크롤링 테스트</h2>
+            <div class="form-group">
+                <label for="dynamic_url">크롤링 URL:</label>
+                <input type="url" id="dynamic_url" placeholder="https://example.com" value="https://m.entertain.naver.com/movie">
+            </div>
+            <div class="form-group">
+                <label for="selectors">CSS 선택자 (한 줄에 하나씩):</label>
+                <textarea id="selectors" rows="4" placeholder="h1&#10;.title&#10;[data-testid='movie-item']">h1
+.title
+[data-testid='movie-item']
+article
+.movie-card</textarea>
+            </div>
+            <button onclick="startDynamicCrawling()">동적 크롤링 시작</button>
+            <div id="dynamic_result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 최근 영화 목록 섹션 -->
+        <div class="section">
+            <h2>최근 수집된 영화</h2>
+            <div id="recent_movies"></div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 데이터 불러오기
+        $(document).ready(function() {
+            loadMovieData();
+        });
+
+        function startCrawling() {
+            const maxMovies = parseInt($('#max_movies').val());
+            const crawlerType = $('#crawler_type').val();
+
+            if (maxMovies < 1 || maxMovies > 100) {
+                alert('영화 수는 1-100 사이로 입력해주세요.');
+                return;
+            }
+
+            $('#crawl_btn').prop('disabled', true);
+            $('#clear_btn').prop('disabled', true);
+            $('#spinner').show();
+            $('#status_text').text('크롤링 중...');
+            $('#crawl_result').hide();
+
+            $.ajax({
+                url: '/data_analysis/crawl_movies/',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: JSON.stringify({
+                    max_movies: maxMovies,
+                    crawler_type: crawlerType
+                }),
+                contentType: 'application/json',
+                success: function(response) {
+                    $('#crawl_result').removeClass('error').addClass('success');
+
+                    let resultText = `크롤링 결과:\n`;
+                    resultText += `상태: ${response.success ? '성공' : '실패'}\n`;
+                    resultText += `메시지: ${response.message}\n`;
+                    resultText += `총 영화 수: ${response.total_movies}\n\n`;
+
+                    if (response.details) {
+                        resultText += `상세 결과:\n`;
+                        response.details.forEach(detail => {
+                            resultText += `- ${detail.source}: ${detail.result.message}\n`;
+                        });
+                    }
+{% extends 'base.html' %}
+
+{% block title %}네이버 영화 크롤러 테스트{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4 text-center">🎬 영화 크롤러 테스트</h1>
+
+    <!-- 영화 크롤링 섹션 -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">네이버 영화 크롤링</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="max_movies" class="form-label">최대 수집 영화 수:</label>
+                        <input type="number" id="max_movies" class="form-control" value="20" min="1" max="100">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="crawler_type" class="form-label">크롤러 유형:</label>
+                        <select id="crawler_type" class="form-select">
+                            <option value="naver">네이버 영화만</option>
+                            <option value="cgv">CGV만</option>
+                            <option value="all">모두</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex mb-3">
+                <button id="crawl_btn" onclick="startCrawling()" class="btn btn-primary me-2">
+                    <i class="bi bi-search"></i> 크롤링 시작
+                </button>
+                <button id="clear_btn" onclick="clearData()" class="btn btn-danger me-2">
+                    <i class="bi bi-trash"></i> 데이터 초기화
+                </button>
+                <button onclick="loadMovieData()" class="btn btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> 데이터 새로고침
+                </button>
+            </div>
+
+            <div class="status d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm text-primary me-2" id="spinner" role="status" style="display: none;"></div>
+                <span id="status_text" class="text-muted">준비됨</span>
+            </div>
+
+            <div id="crawl_result" class="alert mt-3" style="display: none; font-family: monospace; white-space: pre-wrap;"></div>
+        </div>
+    </div>
+
+    <!-- 영화 통계 섹션 -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h2 class="h5 mb-0">영화 데이터 통계</h2>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-4 mb-3">
+                    <div class="p-3 border rounded bg-light">
+                        <h3 id="total_movies" class="h1 text-primary">0</h3>
+                        <div class="text-muted">총 영화 수</div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="p-3 border rounded bg-light">
+                        <h3 id="avg_rating" class="h1 text-primary">0.0</h3>
+                        <div class="text-muted">평균 평점</div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="p-3 border rounded bg-light">
+                        <h3 id="total_genres" class="h1 text-primary">0</h3>
+                        <div class="text-muted">장르 수</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 크롤링 섹션 -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h2 class="h5 mb-0">동적 크롤링 테스트</h2>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="dynamic_url" class="form-label">크롤링 URL:</label>
+                <input type="url" id="dynamic_url" class="form-control" placeholder="https://example.com" value="https://m.entertain.naver.com/movie">
+            </div>
+            <div class="mb-3">
+                <label for="selectors" class="form-label">CSS 선택자 (한 줄에 하나씩):</label>
+                <textarea id="selectors" class="form-control" rows="4" placeholder="h1&#10;.title&#10;[data-testid='movie-item']">h1
+.title
+[data-testid='movie-item']
+article
+.movie-card</textarea>
+            </div>
+            <button onclick="startDynamicCrawling()" class="btn btn-info text-white">
+                <i class="bi bi-lightning"></i> 동적 크롤링 시작
+            </button>
+            <div id="dynamic_result" class="alert mt-3" style="display: none; font-family: monospace; white-space: pre-wrap;"></div>
+        </div>
+    </div>
+
+    <!-- 최근 영화 목록 섹션 -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h2 class="h5 mb-0">최근 수집된 영화</h2>
+        </div>
+        <div class="card-body">
+            <div id="recent_movies" class="row"></div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'data_analysis:dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> 대시보드로 돌아가기
+        </a>
+    </div>
+</div>
+
+<script>
+    // 페이지 로드 시 데이터 불러오기
+    $(document).ready(function() {
+        loadMovieData();
+    });
+
+    function startCrawling() {
+        const maxMovies = parseInt($('#max_movies').val());
+        const crawlerType = $('#crawler_type').val();
+
+        if (maxMovies < 1 || maxMovies > 100) {
+            alert('영화 수는 1-100 사이로 입력해주세요.');
+            return;
+        }
+
+        $('#crawl_btn').prop('disabled', true);
+        $('#clear_btn').prop('disabled', true);
+        $('#spinner').show();
+        $('#status_text').text('크롤링 중...');
+        $('#crawl_result').hide();
+
+        $.ajax({
+            url: '{% url "data_analysis:crawl_movies" %}',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: JSON.stringify({
+                max_movies: maxMovies,
+                crawler_type: crawlerType
+            }),
+            contentType: 'application/json',
+            success: function(response) {
+                $('#crawl_result').removeClass('alert-danger').addClass('alert-success');
+
+                let resultText = `크롤링 결과:\n`;
+                resultText += `상태: ${response.success ? '성공' : '실패'}\n`;
+                resultText += `메시지: ${response.message}\n`;
+                resultText += `총 영화 수: ${response.total_movies}\n\n`;
+
+                if (response.details) {
+                    resultText += `상세 결과:\n`;
+                    response.details.forEach(detail => {
+                        resultText += `- ${detail.source}: ${detail.result.message}\n`;
+                    });
+                }
+
+                $('#crawl_result').text(resultText).show();
+
+                // 통계 업데이트
+                loadMovieData();
+            },
+            error: function(xhr, status, error) {
+                $('#crawl_result').removeClass('alert-success').addClass('alert-danger');
+                $('#crawl_result').text(`크롤링 실패: ${error}\n응답: ${xhr.responseText}`).show();
+            },
+            complete: function() {
+                $('#crawl_btn').prop('disabled', false);
+                $('#clear_btn').prop('disabled', false);
+                $('#spinner').hide();
+                $('#status_text').text('완료');
+            }
+        });
+    }
+
+    function clearData() {
+        if (!confirm('모든 영화 데이터를 삭제하시겠습니까?')) {
+            return;
+        }
+
+        $('#clear_btn').prop('disabled', true);
+        $('#status_text').text('데이터 삭제 중...');
+
+        $.ajax({
+            url: '{% url "data_analysis:clear_movie_data" %}',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#crawl_result').removeClass('alert-danger').addClass('alert-success');
+                    $('#crawl_result').text(response.message).show();
+                    loadMovieData();
+                } else {
+                    $('#crawl_result').removeClass('alert-success').addClass('alert-danger');
+                    $('#crawl_result').text(response.message).show();
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#crawl_result').removeClass('alert-success').addClass('alert-danger');
+                $('#crawl_result').text(`삭제 실패: ${error}`).show();
+            },
+            complete: function() {
+                $('#clear_btn').prop('disabled', false);
+                $('#status_text').text('준비됨');
+            }
+        });
+    }
+
+    function loadMovieData() {
+        $.ajax({
+            url: '{% url "data_analysis:get_movie_data" %}',
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    updateMovieStats(response.data, response.total_count);
+                    displayRecentMovies(response.data.slice(0, 10));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('영화 데이터 로드 실패:', error);
+            }
+        });
+    }
+
+    function updateMovieStats(movies, totalCount) {
+        $('#total_movies').text(totalCount);
+
+        if (movies.length > 0) {
+            const avgRating = movies.reduce((sum, movie) => sum + movie.rating, 0) / movies.length;
+            $('#avg_rating').text(avgRating.toFixed(1));
+
+            const genres = new Set();
+            movies.forEach(movie => {
+                if (movie.genre) {
+                    movie.genre.split('/').forEach(g => genres.add(g.trim()));
+                }
+            });
+            $('#total_genres').text(genres.size);
+        } else {
+            $('#avg_rating').text('0.0');
+            $('#total_genres').text('0');
+        }
+    }
+
+    function displayRecentMovies(movies) {
+        let html = '';
+        if (movies.length === 0) {
+            html = '<div class="col-12"><p class="text-center">수집된 영화가 없습니다.</p></div>';
+        } else {
+            movies.forEach(movie => {
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${movie.title}</h5>
+                                <div class="badge bg-${movie.rating >= 8 ? 'success' : movie.rating >= 6 ? 'warning' : 'danger'} mb-2">평점: ${movie.rating}</div>
+                                <p class="card-text">
+                                    <small>장르: ${movie.genre || '미분류'}</small><br>
+                                    <small>감독: ${movie.director || '미상'}</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        $('#recent_movies').html(html);
+    }
+
+    function startDynamicCrawling() {
+        const url = $('#dynamic_url').val();
+        const selectorsText = $('#selectors').val();
+
+        if (!url) {
+            alert('URL을 입력해주세요.');
+            return;
+        }
+
+        const selectors = selectorsText.split('\n').filter(s => s.trim().length > 0);
+
+        if (selectors.length === 0) {
+            alert('최소 하나의 선택자를 입력해주세요.');
+            return;
+        }
+
+        $('#status_text').text('동적 크롤링 중...');
+        $('#dynamic_result').hide();
+
+        $.ajax({
+            url: '{% url "data_analysis:dynamic_crawl" %}',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: JSON.stringify({
+                url: url,
+                selectors: selectors
+            }),
+            contentType: 'application/json',
+            success: function(response) {
+                $('#dynamic_result').removeClass('alert-danger').addClass('alert-success');
+                $('#dynamic_result').text(JSON.stringify(response, null, 2)).show();
+            },
+            error: function(xhr, status, error) {
+                $('#dynamic_result').removeClass('alert-success').addClass('alert-danger');
+                $('#dynamic_result').text(`동적 크롤링 실패: ${error}\n응답: ${xhr.responseText}`).show();
+            },
+            complete: function() {
+                $('#status_text').text('준비됨');
+            }
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}
+                    $('#crawl_result').text(resultText).show();
+
+                    // 통계 업데이트
+                    loadMovieData();
+                },
+                error: function(xhr, status, error) {
+                    $('#crawl_result').removeClass('success').addClass('error');
+                    $('#crawl_result').text(`크롤링 실패: ${error}\n응답: ${xhr.responseText}`).show();
+                },
+                complete: function() {
+                    $('#crawl_btn').prop('disabled', false);
+                    $('#clear_btn').prop('disabled', false);
+                    $('#spinner').hide();
+                    $('#status_text').text('완료');
+                }
+            });
+        }
+
+        function clearData() {
+            if (!confirm('모든 영화 데이터를 삭제하시겠습니까?')) {
+                return;
+            }
+
+            $('#clear_btn').prop('disabled', true);
+            $('#status_text').text('데이터 삭제 중...');
+
+            $.ajax({
+                url: '/data_analysis/clear_movie_data/',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#crawl_result').removeClass('error').addClass('success');
+                        $('#crawl_result').text(response.message).show();
+                        loadMovieData();
+                    } else {
+                        $('#crawl_result').removeClass('success').addClass('error');
+                        $('#crawl_result').text(response.message).show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#crawl_result').removeClass('success').addClass('error');
+                    $('#crawl_result').text(`삭제 실패: ${error}`).show();
+                },
+                complete: function() {
+                    $('#clear_btn').prop('disabled', false);
+                    $('#status_text').text('준비됨');
+                }
+            });
+        }
+
+        function loadMovieData() {
+            $.ajax({
+                url: '/data_analysis/get_movie_data/',
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        updateMovieStats(response.data, response.total_count);
+                        displayRecentMovies(response.data.slice(0, 10));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('영화 데이터 로드 실패:', error);
+                }
+            });
+        }
+
+        function updateMovieStats(movies, totalCount) {
+            $('#total_movies').text(totalCount);
+
+            if (movies.length > 0) {
+                const avgRating = movies.reduce((sum, movie) => sum + movie.rating, 0) / movies.length;
+                $('#avg_rating').text(avgRating.toFixed(1));
+
+                const genres = new Set();
+                movies.forEach(movie => {
+                    if (movie.genre) {
+                        movie.genre.split('/').forEach(g => genres.add(g.trim()));
+                    }
+                });
+                $('#total_genres').text(genres.size);
+            } else {
+                $('#avg_rating').text('0.0');
+                $('#total_genres').text('0');
+            }
+        }
+
+        function displayRecentMovies(movies) {
+            let html = '';
+            if (movies.length === 0) {
+                html = '<p>수집된 영화가 없습니다.</p>';
+            } else {
+                movies.forEach(movie => {
+                    html += `
+                        <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px;">
+                            <strong>${movie.title}</strong> 
+                            <span style="color: #666;">(평점: ${movie.rating})</span><br>
+                            <small>장르: ${movie.genre || '미분류'} | 감독: ${movie.director || '미상'}</small>
+                        </div>
+                    `;
+                });
+            }
+            $('#recent_movies').html(html);
+        }
+
+        function startDynamicCrawling() {
+            const url = $('#dynamic_url').val();
+            const selectorsText = $('#selectors').val();
+
+            if (!url) {
+                alert('URL을 입력해주세요.');
+                return;
+            }
+
+            const selectors = selectorsText.split('\n').filter(s => s.trim().length > 0);
+
+            if (selectors.length === 0) {
+                alert('최소 하나의 선택자를 입력해주세요.');
+                return;
+            }
+
+            $('#status_text').text('동적 크롤링 중...');
+            $('#dynamic_result').hide();
+
+            $.ajax({
+                url: '/data_analysis/dynamic_crawl/',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: JSON.stringify({
+                    url: url,
+                    selectors: selectors
+                }),
+                contentType: 'application/json',
+                success: function(response) {
+                    $('#dynamic_result').removeClass('error').addClass('success');
+                    $('#dynamic_result').text(JSON.stringify(response, null, 2)).show();
+                },
+                error: function(xhr, status, error) {
+                    $('#dynamic_result').removeClass('success').addClass('error');
+                    $('#dynamic_result').text(`동적 크롤링 실패: ${error}\n응답: ${xhr.responseText}`).show();
+                },
+                complete: function() {
+                    $('#status_text').text('준비됨');
+                }
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

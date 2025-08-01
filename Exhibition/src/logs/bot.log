@@ -72,3 +72,466 @@ WHERE commands.guild_id = %(guild_id_1)s AND commands.is_active = true]
 2025-06-24 11:40:56 - src.commands.dynamic - INFO - 길드 I.V님의 서버(1384162202600341647)의 기존 커맨드 0개 로드 완료
 2025-06-24 11:41:15 - root - INFO - 봇이 종료되었습니다.
 2025-06-24 11:41:15 - root - INFO - 키보드 인터럽트로 봇이 종료되었습니다.
+2025-06-27 15:29:20,935 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-06-27 15:29:20,937 - __main__ - INFO - 데이터베이스 초기화 중...
+2025-06-27 15:29:20,937 - src.models.database - INFO - 데이터베이스 초기화 중...
+2025-06-27 15:29:21,049 - src.models.database - ERROR - 데이터베이스 생성 실패: (1045, "Access denied for user 'j'@'localhost' (using password: YES)")
+2025-06-27 15:29:21,049 - src.models.database - ERROR - 데이터베이스 초기화 실패: (1045, "Access denied for user 'j'@'localhost' (using password: YES)")
+2025-06-27 15:29:21,049 - __main__ - ERROR - 봇 실행 중 오류 발생: (1045, "Access denied for user 'j'@'localhost' (using password: YES)")
+2025-06-27 15:29:52,380 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-06-27 15:29:52,381 - __main__ - INFO - 데이터베이스 초기화 중...
+2025-06-27 15:29:52,381 - src.models.database - INFO - 데이터베이스 초기화 중...
+2025-06-27 15:29:52,412 - src.models.database - INFO - 데이터베이스 'discord_bot' 이미 존재
+2025-06-27 15:29:52,412 - src.models.database - INFO - MySQL 데이터베이스 URL: mysql+pymysql://root:root@localhost:3306/discord_bot?charset=utf8mb4
+2025-06-27 15:29:52,460 - src.models.database - INFO - MySQL 데이터베이스 연결 성공
+2025-06-27 15:29:52,464 - src.models.database - INFO - 기존 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 15:29:52,471 - src.models.database - INFO - 데이터베이스 테이블 생성 완료
+2025-06-27 15:29:52,471 - src.models.database - INFO - 생성된 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 15:29:52,471 - __main__ - INFO - 데이터베이스 초기화 완료
+2025-06-27 15:29:52,471 - __main__ - INFO - Discord API 연결 테스트 중...
+2025-06-27 15:29:52,570 - __main__ - INFO - ✅ Discord API 연결 성공: wss://gateway.discord.gg
+2025-06-27 15:29:52,570 - __main__ - INFO - 🔄 WebSocket 연결 시도 중...
+2025-06-27 15:29:52,571 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-27 15:29:52,571 - __main__ - INFO - 🚀 봇 시작 중...
+2025-06-27 15:29:52,571 - __main__ - INFO - 🔑 토큰 길이: 72 문자
+2025-06-27 15:29:52,571 - __main__ - INFO - 🔑 토큰 시작 부분: MTM4NjY4NzQ3ODgyMzUx...
+2025-06-27 15:29:52,572 - __main__ - INFO - 🤖 AI 로깅 시스템이 활성화되어 있습니다.
+2025-06-27 15:29:53,278 - __main__ - INFO - 🔄 확장 모듈 로드 시작...
+2025-06-27 15:29:53,279 - __main__ - INFO - 🤖 AI 로깅 시스템 활성화됨
+2025-06-27 15:29:53,280 - __main__ - INFO - 현재 파일: D:\Exhibition\src\main.py
+2025-06-27 15:29:53,280 - __main__ - INFO - 프로젝트 루트: D:\Exhibition
+2025-06-27 15:29:53,280 - __main__ - INFO - Commands 디렉토리: D:\Exhibition\src\commands
+2025-06-27 15:29:53,280 - __main__ - INFO - Commands 디렉토리 존재 여부: True
+2025-06-27 15:29:53,280 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.basic
+2025-06-27 15:29:53,341 - src.commands.basic - INFO - BasicCog 로드 완료
+2025-06-27 15:29:53,341 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.basic
+2025-06-27 15:29:53,341 - __main__ - INFO - 📊 현재 트리 커맨드 수: 4
+2025-06-27 15:29:53,341 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.admin
+2025-06-27 15:29:53,913 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-06-27 15:29:53,913 - httpx - DEBUG - load_verify_locations cafile='C:\\Users\\It\\PyCharmMiscProject\\.venv\\Lib\\site-packages\\certifi\\cacert.pem'
+2025-06-27 15:29:54,340 - src.commands.admin - INFO - AdminCog 로드 완료
+2025-06-27 15:29:54,341 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.admin
+2025-06-27 15:29:54,341 - __main__ - INFO - 📊 현재 트리 커맨드 수: 8
+2025-06-27 15:29:54,341 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.ai_chat
+2025-06-27 15:29:54,353 - src.commands.ai_chat - INFO - AIChatCog 로드 완료
+2025-06-27 15:29:54,353 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.ai_chat
+2025-06-27 15:29:54,353 - __main__ - INFO - 📊 현재 트리 커맨드 수: 12
+2025-06-27 15:29:54,353 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.dynamic
+2025-06-27 15:29:54,364 - src.commands.dynamic - INFO - UniversalDynamicCog 로드 완료
+2025-06-27 15:29:54,364 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.dynamic
+2025-06-27 15:29:54,364 - __main__ - INFO - 📊 현재 트리 커맨드 수: 15
+2025-06-27 15:29:54,364 - __main__ - INFO - 📊 총 4개의 확장 모듈이 로드되었습니다.
+2025-06-27 15:29:56,961 - __main__ - INFO - 🔗 Exhibition#3218로 Discord에 로그인했습니다!
+2025-06-27 15:29:56,962 - __main__ - INFO - 봇 ID: 1386687478823518389
+2025-06-27 15:29:56,962 - __main__ - INFO - 연결된 서버 수: 3
+2025-06-27 15:29:56,962 - discord.client - ERROR - Ignoring exception in on_ready
+Traceback (most recent call last):
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\discord\client.py", line 481, in _run_event
+    await coro(*args, **kwargs)
+  File "D:\Exhibition\src\main.py", line 139, in on_ready
+    startup_time = time.time() - self.start_time
+                   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 15:33:17,405 - __main__ - INFO - 종료 신호를 받았습니다.
+2025-06-27 15:33:17,406 - __main__ - INFO - 🛑 봇이 종료되었습니다.
+2025-06-27 15:33:17,406 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-14' coro=<DiscordBot.close() done, defined at D:\Exhibition\src\main.py:331> exception=TypeError("unsupported operand type(s) for -: 'float' and 'datetime.datetime'")>
+Traceback (most recent call last):
+  File "D:\Exhibition\src\main.py", line 336, in close
+    shutdown_time = time.time() - self.start_time
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 15:36:31,221 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-06-27 15:36:31,222 - __main__ - INFO - 데이터베이스 초기화 중...
+2025-06-27 15:36:31,222 - src.models.database - INFO - 데이터베이스 초기화 중...
+2025-06-27 15:36:31,249 - src.models.database - INFO - 데이터베이스 'discord_bot' 이미 존재
+2025-06-27 15:36:31,250 - src.models.database - INFO - MySQL 데이터베이스 URL: mysql+pymysql://root:root@localhost:3306/discord_bot?charset=utf8mb4
+2025-06-27 15:36:31,282 - src.models.database - INFO - MySQL 데이터베이스 연결 성공
+2025-06-27 15:36:31,285 - src.models.database - INFO - 기존 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 15:36:31,291 - src.models.database - INFO - 데이터베이스 테이블 생성 완료
+2025-06-27 15:36:31,291 - src.models.database - INFO - 생성된 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 15:36:31,291 - __main__ - INFO - 데이터베이스 초기화 완료
+2025-06-27 15:36:31,291 - __main__ - INFO - Discord API 연결 테스트 중...
+2025-06-27 15:36:31,367 - __main__ - INFO - ✅ Discord API 연결 성공: wss://gateway.discord.gg
+2025-06-27 15:36:31,367 - __main__ - INFO - 🔄 WebSocket 연결 시도 중...
+2025-06-27 15:36:31,368 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-27 15:36:31,368 - __main__ - INFO - 🚀 봇 시작 중...
+2025-06-27 15:36:31,368 - __main__ - INFO - 🔑 토큰 길이: 72 문자
+2025-06-27 15:36:31,368 - __main__ - INFO - 🔑 토큰 시작 부분: MTM4NjY4NzQ3ODgyMzUx...
+2025-06-27 15:36:31,369 - __main__ - INFO - 🤖 AI 로깅 시스템이 활성화되어 있습니다.
+2025-06-27 15:36:32,168 - __main__ - INFO - 🔄 확장 모듈 로드 시작...
+2025-06-27 15:36:32,168 - __main__ - INFO - 🤖 AI 로깅 시스템 활성화됨
+2025-06-27 15:36:32,169 - __main__ - INFO - 현재 파일: D:\Exhibition\src\main.py
+2025-06-27 15:36:32,169 - __main__ - INFO - 프로젝트 루트: D:\Exhibition
+2025-06-27 15:36:32,169 - __main__ - INFO - Commands 디렉토리: D:\Exhibition\src\commands
+2025-06-27 15:36:32,170 - __main__ - INFO - Commands 디렉토리 존재 여부: True
+2025-06-27 15:36:32,170 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.basic
+2025-06-27 15:36:32,189 - src.commands.basic - INFO - BasicCog 로드 완료
+2025-06-27 15:36:32,190 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.basic
+2025-06-27 15:36:32,190 - __main__ - INFO - 📊 현재 트리 커맨드 수: 4
+2025-06-27 15:36:32,190 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.admin
+2025-06-27 15:36:32,599 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-06-27 15:36:32,600 - httpx - DEBUG - load_verify_locations cafile='C:\\Users\\It\\PyCharmMiscProject\\.venv\\Lib\\site-packages\\certifi\\cacert.pem'
+2025-06-27 15:36:32,988 - src.commands.admin - INFO - AdminCog 로드 완료
+2025-06-27 15:36:32,988 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.admin
+2025-06-27 15:36:32,988 - __main__ - INFO - 📊 현재 트리 커맨드 수: 8
+2025-06-27 15:36:32,988 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.ai_chat
+2025-06-27 15:36:32,990 - src.commands.ai_chat - INFO - AIChatCog 로드 완료
+2025-06-27 15:36:32,990 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.ai_chat
+2025-06-27 15:36:32,990 - __main__ - INFO - 📊 현재 트리 커맨드 수: 12
+2025-06-27 15:36:32,990 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.dynamic
+2025-06-27 15:36:32,991 - src.commands.dynamic - INFO - UniversalDynamicCog 로드 완료
+2025-06-27 15:36:32,991 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.dynamic
+2025-06-27 15:36:32,991 - __main__ - INFO - 📊 현재 트리 커맨드 수: 15
+2025-06-27 15:36:32,991 - __main__ - INFO - 📊 총 4개의 확장 모듈이 로드되었습니다.
+2025-06-27 15:36:35,620 - __main__ - INFO - 🔗 Exhibition#3218로 Discord에 로그인했습니다!
+2025-06-27 15:36:35,620 - __main__ - INFO - 봇 ID: 1386687478823518389
+2025-06-27 15:36:35,620 - __main__ - INFO - 연결된 서버 수: 3
+2025-06-27 15:36:35,620 - __main__ - WARNING - 시작 시간 계산 실패: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 15:36:35,634 - src.services.command_service - INFO - MySQL: 길드 1238295808445644841의 명령어 0개 조회
+2025-06-27 15:36:35,635 - src.commands.dynamic - INFO - 길드 개인 프로젝트 진행용 서버의 Universal 커맨드 0개 로드 완료
+2025-06-27 15:36:35,637 - src.services.command_service - INFO - MySQL: 길드 1384162202600341647의 명령어 0개 조회
+2025-06-27 15:36:35,637 - src.commands.dynamic - INFO - 길드 I.V님의 서버의 Universal 커맨드 0개 로드 완료
+2025-06-27 15:36:35,640 - src.services.command_service - INFO - MySQL: 길드 1387298730255847446의 명령어 3개 조회
+2025-06-27 15:36:35,641 - src.commands.dynamic - ERROR - 기존 커맨드 로드 실패: Instance <Command at 0x263045536b0> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+2025-06-27 15:36:35,641 - __main__ - INFO - ✅ 기존 동적 커맨드 로드 완료
+2025-06-27 15:36:35,641 - __main__ - INFO - 🔄 슬래시 커맨드 동기화 시작...
+2025-06-27 15:36:35,641 - __main__ - INFO - 📊 동기화 전 봇 트리 커맨드 수: 15
+2025-06-27 15:36:36,200 - __main__ - INFO - 🔄 15개의 전역 슬래시 커맨드가 동기화되었습니다.
+2025-06-27 15:36:36,201 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어
+2025-06-27 15:36:36,201 - __main__ - INFO -   ✅ 전역 동기화됨: /핑
+2025-06-27 15:36:36,201 - __main__ - INFO -   ✅ 전역 동기화됨: /정보
+2025-06-27 15:36:36,201 - __main__ - INFO -   ✅ 전역 동기화됨: /초대
+2025-06-27 15:36:36,202 - __main__ - INFO -   ✅ 전역 동기화됨: /상태
+2025-06-27 15:36:36,202 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어삭제
+2025-06-27 15:36:36,202 - __main__ - INFO -   ✅ 전역 동기화됨: /역할설정
+2025-06-27 15:36:36,202 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어정보
+2025-06-27 15:36:36,203 - __main__ - INFO -   ✅ 전역 동기화됨: /질문
+2025-06-27 15:36:36,203 - __main__ - INFO -   ✅ 전역 동기화됨: /대화
+2025-06-27 15:36:36,203 - __main__ - INFO -   ✅ 전역 동기화됨: /대화초기화
+2025-06-27 15:36:36,203 - __main__ - INFO -   ✅ 전역 동기화됨: /대화기록
+2025-06-27 15:36:36,204 - __main__ - INFO -   ✅ 전역 동기화됨: /universal
+2025-06-27 15:36:36,204 - __main__ - INFO -   ✅ 전역 동기화됨: /커맨드분석
+2025-06-27 15:36:36,204 - __main__ - INFO -   ✅ 전역 동기화됨: /실시간테스트
+2025-06-27 15:36:36,585 - __main__ - INFO - 🔄 I.V님의 서버(1384162202600341647)에 0개의 슬래시 커맨드가 동기화되었습니다.
+2025-06-27 15:36:36,586 - __main__ - WARNING - ⚠️ 길드 ID 1357725217518260446를 찾을 수 없습니다.
+2025-06-27 15:36:36,586 - __main__ - INFO - ✅ 봇이 완전히 준비되었습니다!
+2025-06-27 15:36:36,586 - __main__ - INFO - 📊 AI 로깅 통계: {'requests': 0, 'responses': 0, 'errors': 0, 'total_processing_time': 0.0, 'avg_processing_time': 0, 'success_rate': 0}
+2025-06-27 16:06:14,060 - __main__ - INFO - 종료 신호를 받았습니다.
+2025-06-27 16:06:14,061 - __main__ - INFO - 🛑 봇이 종료되었습니다.
+2025-06-27 16:06:14,061 - __main__ - WARNING - 종료 시간 계산 실패: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 16:06:14,061 - __main__ - INFO - 📊 최종 AI 로깅 통계: {'requests': 0, 'responses': 0, 'errors': 0, 'total_processing_time': 0.0, 'avg_processing_time': 0, 'success_rate': 0}
+2025-06-27 16:06:14,065 - __main__ - INFO - 🛑 봇이 종료되었습니다.
+2025-06-27 16:06:14,065 - __main__ - WARNING - 종료 시간 계산 실패: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 16:06:14,066 - __main__ - INFO - 📊 최종 AI 로깅 통계: {'requests': 0, 'responses': 0, 'errors': 0, 'total_processing_time': 0.0, 'avg_processing_time': 0, 'success_rate': 0}
+2025-06-27 16:06:19,088 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-06-27 16:06:19,089 - __main__ - INFO - 데이터베이스 초기화 중...
+2025-06-27 16:06:19,089 - src.models.database - INFO - 데이터베이스 초기화 중...
+2025-06-27 16:06:19,117 - src.models.database - INFO - 데이터베이스 'discord_bot' 이미 존재
+2025-06-27 16:06:19,117 - src.models.database - INFO - MySQL 데이터베이스 URL: mysql+pymysql://root:root@localhost:3306/discord_bot?charset=utf8mb4
+2025-06-27 16:06:19,148 - src.models.database - INFO - MySQL 데이터베이스 연결 성공
+2025-06-27 16:06:19,151 - src.models.database - INFO - 기존 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 16:06:19,157 - src.models.database - INFO - 데이터베이스 테이블 생성 완료
+2025-06-27 16:06:19,157 - src.models.database - INFO - 생성된 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 16:06:19,157 - __main__ - INFO - 데이터베이스 초기화 완료
+2025-06-27 16:06:19,157 - __main__ - INFO - Discord API 연결 테스트 중...
+2025-06-27 16:06:19,252 - __main__ - INFO - ✅ Discord API 연결 성공: wss://gateway.discord.gg
+2025-06-27 16:06:19,252 - __main__ - INFO - 🔄 WebSocket 연결 시도 중...
+2025-06-27 16:06:19,253 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-27 16:06:19,254 - __main__ - INFO - 🚀 봇 시작 중...
+2025-06-27 16:06:19,254 - __main__ - INFO - 🔑 토큰 길이: 72 문자
+2025-06-27 16:06:19,254 - __main__ - INFO - 🔑 토큰 시작 부분: MTM4NjY4NzQ3ODgyMzUx...
+2025-06-27 16:06:19,256 - __main__ - INFO - 🤖 AI 로깅 시스템이 활성화되어 있습니다.
+2025-06-27 16:06:20,006 - __main__ - INFO - 🔄 확장 모듈 로드 시작...
+2025-06-27 16:06:20,006 - __main__ - INFO - 🤖 AI 로깅 시스템 활성화됨
+2025-06-27 16:06:20,006 - __main__ - INFO - 현재 파일: D:\Exhibition\src\main.py
+2025-06-27 16:06:20,006 - __main__ - INFO - 프로젝트 루트: D:\Exhibition
+2025-06-27 16:06:20,006 - __main__ - INFO - Commands 디렉토리: D:\Exhibition\src\commands
+2025-06-27 16:06:20,008 - __main__ - INFO - Commands 디렉토리 존재 여부: True
+2025-06-27 16:06:20,008 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.basic
+2025-06-27 16:06:20,021 - src.commands.basic - INFO - BasicCog 로드 완료
+2025-06-27 16:06:20,021 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.basic
+2025-06-27 16:06:20,021 - __main__ - INFO - 📊 현재 트리 커맨드 수: 4
+2025-06-27 16:06:20,022 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.admin
+2025-06-27 16:06:20,430 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-06-27 16:06:20,431 - httpx - DEBUG - load_verify_locations cafile='C:\\Users\\It\\PyCharmMiscProject\\.venv\\Lib\\site-packages\\certifi\\cacert.pem'
+2025-06-27 16:06:20,842 - src.commands.admin - INFO - AdminCog 로드 완료
+2025-06-27 16:06:20,842 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.admin
+2025-06-27 16:06:20,842 - __main__ - INFO - 📊 현재 트리 커맨드 수: 8
+2025-06-27 16:06:20,842 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.ai_chat
+2025-06-27 16:06:20,843 - src.commands.ai_chat - INFO - AIChatCog 로드 완료
+2025-06-27 16:06:20,843 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.ai_chat
+2025-06-27 16:06:20,843 - __main__ - INFO - 📊 현재 트리 커맨드 수: 12
+2025-06-27 16:06:20,843 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.dynamic
+2025-06-27 16:06:20,845 - src.commands.dynamic - INFO - UniversalDynamicCog 로드 완료
+2025-06-27 16:06:20,845 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.dynamic
+2025-06-27 16:06:20,845 - __main__ - INFO - 📊 현재 트리 커맨드 수: 15
+2025-06-27 16:06:20,845 - __main__ - INFO - 📊 총 4개의 확장 모듈이 로드되었습니다.
+2025-06-27 16:06:23,479 - __main__ - INFO - 🔗 Exhibition#3218로 Discord에 로그인했습니다!
+2025-06-27 16:06:23,479 - __main__ - INFO - 봇 ID: 1386687478823518389
+2025-06-27 16:06:23,479 - __main__ - INFO - 연결된 서버 수: 3
+2025-06-27 16:06:23,479 - __main__ - WARNING - 시작 시간 계산 실패: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 16:06:23,488 - src.services.command_service - INFO - MySQL: 길드 1238295808445644841의 명령어 0개 조회
+2025-06-27 16:06:23,489 - src.commands.dynamic - INFO - 길드 개인 프로젝트 진행용 서버의 Universal 커맨드 0개 로드 완료
+2025-06-27 16:06:23,490 - src.services.command_service - INFO - MySQL: 길드 1384162202600341647의 명령어 0개 조회
+2025-06-27 16:06:23,491 - src.commands.dynamic - INFO - 길드 I.V님의 서버의 Universal 커맨드 0개 로드 완료
+2025-06-27 16:06:23,492 - src.services.command_service - INFO - MySQL: 길드 1387298730255847446의 명령어 3개 조회
+2025-06-27 16:06:23,493 - src.commands.dynamic - ERROR - 기존 커맨드 로드 실패: Instance <Command at 0x1fd8dfd7740> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+2025-06-27 16:06:23,493 - __main__ - INFO - ✅ 기존 동적 커맨드 로드 완료
+2025-06-27 16:06:23,493 - __main__ - INFO - 🔄 슬래시 커맨드 동기화 시작...
+2025-06-27 16:06:23,494 - __main__ - INFO - 📊 동기화 전 봇 트리 커맨드 수: 15
+2025-06-27 16:06:24,610 - __main__ - INFO - 🔄 15개의 전역 슬래시 커맨드가 동기화되었습니다.
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /핑
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /정보
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /초대
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /상태
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어삭제
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /역할설정
+2025-06-27 16:06:24,611 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어정보
+2025-06-27 16:06:24,612 - __main__ - INFO -   ✅ 전역 동기화됨: /질문
+2025-06-27 16:06:24,612 - __main__ - INFO -   ✅ 전역 동기화됨: /대화
+2025-06-27 16:06:24,612 - __main__ - INFO -   ✅ 전역 동기화됨: /대화초기화
+2025-06-27 16:06:24,612 - __main__ - INFO -   ✅ 전역 동기화됨: /대화기록
+2025-06-27 16:06:24,612 - __main__ - INFO -   ✅ 전역 동기화됨: /universal
+2025-06-27 16:06:24,612 - __main__ - INFO -   ✅ 전역 동기화됨: /커맨드분석
+2025-06-27 16:06:24,612 - __main__ - INFO -   ✅ 전역 동기화됨: /실시간테스트
+2025-06-27 16:06:25,013 - __main__ - INFO - 🔄 I.V님의 서버(1384162202600341647)에 0개의 슬래시 커맨드가 동기화되었습니다.
+2025-06-27 16:06:25,014 - __main__ - WARNING - ⚠️ 길드 ID 1357725217518260446를 찾을 수 없습니다.
+2025-06-27 16:06:25,015 - __main__ - INFO - ✅ 봇이 완전히 준비되었습니다!
+2025-06-27 16:06:25,015 - __main__ - INFO - 📊 AI 로깅 통계: {'requests': 0, 'responses': 0, 'errors': 0, 'total_processing_time': 0.0, 'avg_processing_time': 0, 'success_rate': 0}
+2025-06-27 16:10:19,814 - src.services.command_service - INFO - MySQL: 길드 1384162202600341647의 명령어 0개 조회
+2025-06-27 16:11:11,316 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'system', 'content': '\n            당신은 Discord 봇에 내장된 AI 비서입니다.\n            사용자와 자연스러운 대화를 이어나가세요.\n            이전 대화 내용을 기억하고 맥락에 맞게 응답해주세요.\n            답변은 친절하고 도움이 되게 작성하되, 간결하게 유지해주세요.\n            '}, {'role': 'user', 'content': '오늘 점심에 갈치구이와 제육볶음 갈치 찌개를 먹었어'}, {'role': 'user', 'content': ''}], 'model': 'gpt-4', 'max_tokens': 1000, 'temperature': 0.7}}
+2025-06-27 16:11:11,353 - httpcore.connection - DEBUG - connect_tcp.started host='api.openai.com' port=443 local_address=None timeout=5.0 socket_options=None
+2025-06-27 16:11:11,380 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x000001FD8E0063F0>
+2025-06-27 16:11:11,380 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x000001FD8DEE80D0> server_hostname='api.openai.com' timeout=5.0
+2025-06-27 16:11:11,402 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x000001FD8E006330>
+2025-06-27 16:11:11,402 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-27 16:11:11,402 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-27 16:11:11,402 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-27 16:11:11,402 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-27 16:11:11,402 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-27 16:11:19,255 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Fri, 27 Jun 2025 07:11:19 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'access-control-expose-headers', b'X-Request-ID'), (b'openai-organization', b'user-o0zglu2vbcsqpkwbaty7xett'), (b'openai-processing-ms', b'6003'), (b'openai-version', b'2020-10-01'), (b'x-envoy-upstream-service-time', b'6006'), (b'x-ratelimit-limit-requests', b'10000'), (b'x-ratelimit-limit-tokens', b'10000'), (b'x-ratelimit-remaining-requests', b'9999'), (b'x-ratelimit-remaining-tokens', b'9894'), (b'x-ratelimit-reset-requests', b'8.64s'), (b'x-ratelimit-reset-tokens', b'636ms'), (b'x-request-id', b'req_8d976a77cf851eaa9c9b45beb667a821'), (b'strict-transport-security', b'max-age=31536000; includeSubDomains; preload'), (b'cf-cache-status', b'DYNAMIC'), (b'Set-Cookie', b'__cf_bm=Cti8b0bUC3xM2Bzd3IM_rfswU88YeomOrew.Cw6tojg-1751008279-1.0.1.1-h1Zffn69qA4PVreoGGspFZKsgOB4DVDdsNpiD8IW4UCjKD7eVfoSIUKn9YA49Wu_3O73i4Url73omtlgwT6z0rAtC9TlmSniDGKN5pKbc0g; path=/; expires=Fri, 27-Jun-25 07:41:19 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'X-Content-Type-Options', b'nosniff'), (b'Set-Cookie', b'_cfuvid=BqYXp_vACzSZU6mIcOHlu5vzcOsEHd3ZV7WA7vGm12M-1751008279111-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'Server', b'cloudflare'), (b'CF-RAY', b'956320ff698ae9fd-ICN'), (b'Content-Encoding', b'gzip'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-06-27 16:11:19,256 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-27 16:11:19,256 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-27 16:11:19,257 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-27 16:11:19,257 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-27 16:11:19,257 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-27 16:11:19,257 - openai._base_client - DEBUG - HTTP Request: POST https://api.openai.com/v1/chat/completions "200 OK"
+2025-06-27 16:13:23,793 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-06-27 16:13:23,794 - httpx - DEBUG - load_verify_locations cafile='C:\\Users\\It\\PyCharmMiscProject\\.venv\\Lib\\site-packages\\certifi\\cacert.pem'
+2025-06-27 16:13:24,193 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'user', 'content': '\nUser request: 서버에 처음 들어오는 사람이 있으면 환영하는 메세지를 보내는 기능.\nComplexity level: 3/5\nSpecial requirements: None\nExperimental features: Enabled\n\nBased on the above information, generate metadata for a Discord slash command.\nRespond ONLY with valid JSON format without any additional text.\n\n{\n    "name": "command_name",\n    "description": "Command description (under 100 characters)",\n    "response_template": "Response template",\n    "use_ai": true/false,\n    "parameters": []\n}\n\nRules:\n- name: lowercase letters, numbers, underscores only, 1-32 characters\n- description: under 100 characters\n- response_template: actual response content\n- Do NOT include any text outside of JSON\n'}], 'model': 'gpt-4', 'max_tokens': 1000, 'temperature': 0.7}}
+2025-06-27 16:13:24,193 - httpcore.connection - DEBUG - connect_tcp.started host='api.openai.com' port=443 local_address=None timeout=5.0 socket_options=None
+2025-06-27 16:13:24,229 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x000001FD8E0362D0>
+2025-06-27 16:13:24,229 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x000001FD8DFF51D0> server_hostname='api.openai.com' timeout=5.0
+2025-06-27 16:13:24,246 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x000001FD8E0361E0>
+2025-06-27 16:13:24,246 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-27 16:13:24,247 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-27 16:13:24,247 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-27 16:13:24,247 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-27 16:13:24,247 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-27 16:13:30,448 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Fri, 27 Jun 2025 07:13:30 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'access-control-expose-headers', b'X-Request-ID'), (b'openai-organization', b'user-o0zglu2vbcsqpkwbaty7xett'), (b'openai-processing-ms', b'5541'), (b'openai-version', b'2020-10-01'), (b'x-envoy-upstream-service-time', b'5546'), (b'x-ratelimit-limit-requests', b'10000'), (b'x-ratelimit-limit-tokens', b'10000'), (b'x-ratelimit-remaining-requests', b'9999'), (b'x-ratelimit-remaining-tokens', b'9816'), (b'x-ratelimit-reset-requests', b'8.64s'), (b'x-ratelimit-reset-tokens', b'1.104s'), (b'x-request-id', b'req_7acad7b08762b49e6f520e4352dc361f'), (b'strict-transport-security', b'max-age=31536000; includeSubDomains; preload'), (b'cf-cache-status', b'DYNAMIC'), (b'Set-Cookie', b'__cf_bm=YllpLdtdaeugYYoABgSWP0V9ZOgyd.5Uzyadbsh6ltQ-1751008410-1.0.1.1-QSmo3nytmfa6DBAAJOSd8PkkXDPvqfleQHFRNy7a4wyRLn9b2Lt_Bq46AKAn5ZdQaBM_4pPQIcmWkxk6MlZ31ARYuM64jjMAwOzeL8.6UUs; path=/; expires=Fri, 27-Jun-25 07:43:30 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'X-Content-Type-Options', b'nosniff'), (b'Set-Cookie', b'_cfuvid=JncU0JdT1ihYzrdYYSsslt5DLJa4JHJ4lHbhdWNI_FE-1751008410302-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9563243ddbbf3270-ICN'), (b'Content-Encoding', b'gzip'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-06-27 16:13:30,449 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-27 16:13:30,449 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-27 16:13:30,452 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-27 16:13:30,452 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-27 16:13:30,452 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-27 16:13:30,452 - openai._base_client - DEBUG - HTTP Request: POST https://api.openai.com/v1/chat/completions "200 OK"
+2025-06-27 16:13:30,457 - src.services.command_service - INFO - MySQL: 명령어 생성 성공 - welcome_message (Guild: 1384162202600341647, ID: 4)
+2025-06-27 16:13:30,460 - src.commands.dynamic - ERROR - Universal 커맨드 등록 실패: Instance <Command at 0x1fd8dfd76b0> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+2025-06-27 16:13:30,460 - src.commands.dynamic - ERROR - Universal 커맨드 생성 실패: Instance <Command at 0x1fd8dfd76b0> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+2025-06-27 16:16:43,495 - __main__ - INFO - 종료 신호를 받았습니다.
+2025-06-27 16:16:43,495 - __main__ - INFO - 🛑 봇이 종료되었습니다.
+2025-06-27 16:16:43,495 - __main__ - WARNING - 종료 시간 계산 실패: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 16:16:43,496 - __main__ - INFO - 📊 최종 AI 로깅 통계: {'requests': 0, 'responses': 0, 'errors': 0, 'total_processing_time': 0.0, 'avg_processing_time': 0, 'success_rate': 0}
+2025-06-27 16:16:43,498 - __main__ - INFO - 🛑 봇이 종료되었습니다.
+2025-06-27 16:16:43,498 - __main__ - WARNING - 종료 시간 계산 실패: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 16:16:43,499 - __main__ - INFO - 📊 최종 AI 로깅 통계: {'requests': 0, 'responses': 0, 'errors': 0, 'total_processing_time': 0.0, 'avg_processing_time': 0, 'success_rate': 0}
+2025-06-27 16:16:43,752 - httpcore.connection - DEBUG - close.started
+2025-06-27 16:16:43,753 - httpcore.connection - DEBUG - close.complete
+2025-06-27 16:16:43,808 - httpcore.connection - DEBUG - close.started
+2025-06-27 16:16:43,808 - httpcore.connection - DEBUG - close.complete
+2025-06-27 16:16:48,902 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-06-27 16:16:48,903 - __main__ - INFO - 데이터베이스 초기화 중...
+2025-06-27 16:16:48,904 - src.models.database - INFO - 데이터베이스 초기화 중...
+2025-06-27 16:16:48,915 - src.models.database - INFO - 데이터베이스 'discord_bot' 이미 존재
+2025-06-27 16:16:48,915 - src.models.database - INFO - MySQL 데이터베이스 URL: mysql+pymysql://root:root@localhost:3306/discord_bot?charset=utf8mb4
+2025-06-27 16:16:48,955 - src.models.database - INFO - MySQL 데이터베이스 연결 성공
+2025-06-27 16:16:48,961 - src.models.database - INFO - 기존 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 16:16:48,969 - src.models.database - INFO - 데이터베이스 테이블 생성 완료
+2025-06-27 16:16:48,969 - src.models.database - INFO - 생성된 테이블: ['commands', 'conversation_history', 'users']
+2025-06-27 16:16:48,969 - __main__ - INFO - 데이터베이스 초기화 완료
+2025-06-27 16:16:48,969 - __main__ - INFO - Discord API 연결 테스트 중...
+2025-06-27 16:16:49,072 - __main__ - INFO - ✅ Discord API 연결 성공: wss://gateway.discord.gg
+2025-06-27 16:16:49,072 - __main__ - INFO - 🔄 WebSocket 연결 시도 중...
+2025-06-27 16:16:49,072 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-06-27 16:16:49,073 - __main__ - INFO - 🚀 봇 시작 중...
+2025-06-27 16:16:49,073 - __main__ - INFO - 🔑 토큰 길이: 72 문자
+2025-06-27 16:16:49,073 - __main__ - INFO - 🔑 토큰 시작 부분: MTM4NjY4NzQ3ODgyMzUx...
+2025-06-27 16:16:49,073 - __main__ - INFO - 🤖 AI 로깅 시스템이 활성화되어 있습니다.
+2025-06-27 16:16:49,914 - __main__ - INFO - 🔄 확장 모듈 로드 시작...
+2025-06-27 16:16:49,914 - __main__ - INFO - 🤖 AI 로깅 시스템 활성화됨
+2025-06-27 16:16:49,915 - __main__ - INFO - 현재 파일: D:\Exhibition\src\main.py
+2025-06-27 16:16:49,915 - __main__ - INFO - 프로젝트 루트: D:\Exhibition
+2025-06-27 16:16:49,915 - __main__ - INFO - Commands 디렉토리: D:\Exhibition\src\commands
+2025-06-27 16:16:49,916 - __main__ - INFO - Commands 디렉토리 존재 여부: True
+2025-06-27 16:16:49,916 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.basic
+2025-06-27 16:16:49,996 - src.commands.basic - INFO - BasicCog 로드 완료
+2025-06-27 16:16:49,997 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.basic
+2025-06-27 16:16:49,997 - __main__ - INFO - 📊 현재 트리 커맨드 수: 4
+2025-06-27 16:16:49,997 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.admin
+2025-06-27 16:16:50,775 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-06-27 16:16:50,775 - httpx - DEBUG - load_verify_locations cafile='C:\\Users\\It\\PyCharmMiscProject\\.venv\\Lib\\site-packages\\certifi\\cacert.pem'
+2025-06-27 16:16:51,692 - src.commands.admin - INFO - AdminCog 로드 완료
+2025-06-27 16:16:51,693 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.admin
+2025-06-27 16:16:51,693 - __main__ - INFO - 📊 현재 트리 커맨드 수: 8
+2025-06-27 16:16:51,693 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.ai_chat
+2025-06-27 16:16:51,694 - src.commands.ai_chat - INFO - AIChatCog 로드 완료
+2025-06-27 16:16:51,694 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.ai_chat
+2025-06-27 16:16:51,694 - __main__ - INFO - 📊 현재 트리 커맨드 수: 12
+2025-06-27 16:16:51,694 - __main__ - INFO - 🔄 확장 모듈 로드 시도: src.commands.dynamic
+2025-06-27 16:16:51,696 - src.commands.dynamic - INFO - UniversalDynamicCog 로드 완료
+2025-06-27 16:16:51,696 - __main__ - INFO - ✅ 확장 모듈 로드 성공: src.commands.dynamic
+2025-06-27 16:16:51,696 - __main__ - INFO - 📊 현재 트리 커맨드 수: 15
+2025-06-27 16:16:51,696 - __main__ - INFO - 📊 총 4개의 확장 모듈이 로드되었습니다.
+2025-06-27 16:16:54,562 - __main__ - INFO - 🔗 Exhibition#3218로 Discord에 로그인했습니다!
+2025-06-27 16:16:54,563 - __main__ - INFO - 봇 ID: 1386687478823518389
+2025-06-27 16:16:54,563 - __main__ - INFO - 연결된 서버 수: 3
+2025-06-27 16:16:54,563 - __main__ - WARNING - 시작 시간 계산 실패: unsupported operand type(s) for -: 'float' and 'datetime.datetime'
+2025-06-27 16:16:54,584 - src.services.command_service - INFO - MySQL: 길드 1238295808445644841의 명령어 0개 조회
+2025-06-27 16:16:54,585 - src.commands.dynamic - INFO - 길드 개인 프로젝트 진행용 서버의 Universal 커맨드 0개 로드 완료
+2025-06-27 16:16:54,588 - src.services.command_service - INFO - MySQL: 길드 1384162202600341647의 명령어 1개 조회
+2025-06-27 16:16:54,588 - src.commands.dynamic - ERROR - 기존 커맨드 로드 실패: Instance <Command at 0x18dec0f3920> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+2025-06-27 16:16:54,589 - __main__ - INFO - ✅ 기존 동적 커맨드 로드 완료
+2025-06-27 16:16:54,589 - __main__ - INFO - 🔄 슬래시 커맨드 동기화 시작...
+2025-06-27 16:16:54,589 - __main__ - INFO - 📊 동기화 전 봇 트리 커맨드 수: 15
+2025-06-27 16:16:55,039 - __main__ - INFO - 🔄 15개의 전역 슬래시 커맨드가 동기화되었습니다.
+2025-06-27 16:16:55,039 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어
+2025-06-27 16:16:55,040 - __main__ - INFO -   ✅ 전역 동기화됨: /핑
+2025-06-27 16:16:55,040 - __main__ - INFO -   ✅ 전역 동기화됨: /정보
+2025-06-27 16:16:55,040 - __main__ - INFO -   ✅ 전역 동기화됨: /초대
+2025-06-27 16:16:55,040 - __main__ - INFO -   ✅ 전역 동기화됨: /상태
+2025-06-27 16:16:55,040 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어삭제
+2025-06-27 16:16:55,041 - __main__ - INFO -   ✅ 전역 동기화됨: /역할설정
+2025-06-27 16:16:55,041 - __main__ - INFO -   ✅ 전역 동기화됨: /명령어정보
+2025-06-27 16:16:55,041 - __main__ - INFO -   ✅ 전역 동기화됨: /질문
+2025-06-27 16:16:55,041 - __main__ - INFO -   ✅ 전역 동기화됨: /대화
+2025-06-27 16:16:55,041 - __main__ - INFO -   ✅ 전역 동기화됨: /대화초기화
+2025-06-27 16:16:55,041 - __main__ - INFO -   ✅ 전역 동기화됨: /대화기록
+2025-06-27 16:16:55,042 - __main__ - INFO -   ✅ 전역 동기화됨: /universal
+2025-06-27 16:16:55,042 - __main__ - INFO -   ✅ 전역 동기화됨: /커맨드분석
+2025-06-27 16:16:55,042 - __main__ - INFO -   ✅ 전역 동기화됨: /실시간테스트
+2025-06-27 16:16:55,405 - __main__ - INFO - 🔄 I.V님의 서버(1384162202600341647)에 0개의 슬래시 커맨드가 동기화되었습니다.
+2025-06-27 16:16:55,405 - __main__ - WARNING - ⚠️ 길드 ID 1357725217518260446를 찾을 수 없습니다.
+2025-06-27 16:16:55,406 - __main__ - INFO - ✅ 봇이 완전히 준비되었습니다!
+2025-06-27 16:16:55,406 - __main__ - INFO - 📊 AI 로깅 통계: {'requests': 0, 'responses': 0, 'errors': 0, 'total_processing_time': 0.0, 'avg_processing_time': 0, 'success_rate': 0}
+2025-06-27 23:01:08,817 - discord.client - ERROR - Attempting a reconnect in 0.84s
+Traceback (most recent call last):
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 1203, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 880, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 917, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\resolver.py", line 33, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 901, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 976, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\discord\client.py", line 701, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 520, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\discord\gateway.py", line 375, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\discord\http.py", line 554, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\client.py", line 835, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\client.py", line 581, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 944, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 1209, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host gateway-us-east1-c.discord.gg:443 ssl:default [getaddrinfo failed]
+2025-06-30 23:00:50,968 - discord.client - ERROR - Attempting a reconnect in 0.22s
+Traceback (most recent call last):
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 1203, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 880, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 917, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\resolver.py", line 33, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 901, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 976, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\discord\client.py", line 701, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 520, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\discord\gateway.py", line 375, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\discord\http.py", line 554, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\client.py", line 835, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\client.py", line 581, in _request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 544, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 944, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\It\PyCharmMiscProject\.venv\Lib\site-packages\aiohttp\connector.py", line 1209, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host gateway-us-east1-c.discord.gg:443 ssl:default [getaddrinfo failed]

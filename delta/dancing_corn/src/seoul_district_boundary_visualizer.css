@@ -1,0 +1,271 @@
+.seoul-boundaries-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.boundaries-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.boundaries-header h1 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 2.5em;
+  font-weight: bold;
+}
+
+.boundaries-header p {
+  margin: 0;
+  color: #666;
+  font-size: 1.2em;
+}
+
+.boundaries-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.svg-container {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.boundaries-svg {
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+}
+
+.district-boundary {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.district-boundary:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.district-label {
+  font-size: 12px;
+  font-weight: bold;
+  fill: #333;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.district-label:hover {
+  font-size: 14px;
+  fill: #fff;
+}
+
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.selected-info,
+.default-info {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-left: 5px solid #667eea;
+}
+
+.selected-info h2,
+.default-info h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.8em;
+  text-align: center;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.info-row .label {
+  font-weight: bold;
+  color: #333;
+}
+
+.info-row .value {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.default-info p {
+  text-align: center;
+  color: #666;
+  margin: 0;
+  font-style: italic;
+}
+
+.hover-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.hover-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.2em;
+}
+
+.hover-info p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.9em;
+}
+
+.district-list {
+  grid-column: 1 / -1;
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.district-list h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+  text-align: center;
+  font-size: 1.5em;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.list-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+}
+
+.list-item.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.district-name {
+  font-weight: bold;
+}
+
+.district-pop {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.list-item.selected .district-pop {
+  opacity: 1;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .boundaries-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .svg-container {
+    padding: 20px;
+  }
+  
+  .district-label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .seoul-boundaries-container {
+    padding: 10px;
+  }
+  
+  .boundaries-header h1 {
+    font-size: 2em;
+  }
+  
+  .svg-container {
+    padding: 15px;
+  }
+  
+  .district-label {
+    font-size: 8px;
+  }
+  
+  .list-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  
+  .list-item {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .boundaries-header h1 {
+    font-size: 1.5em;
+  }
+  
+  .district-label {
+    font-size: 6px;
+  }
+  
+  .list-grid {
+    grid-template-columns: 1fr;
+  }
+}

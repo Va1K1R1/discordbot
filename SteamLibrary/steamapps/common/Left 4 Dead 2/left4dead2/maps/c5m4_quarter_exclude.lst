@@ -1,0 +1,34 @@
+models/props_doors/doormain_skin02
+models/props_doors/doormain_skin03
+models/props_doors/doormain_skin04
+models/props_vehicles/airport_fuel_truck
+models/props_fortifications/police_barrier001b
+
+1024 models/infected/common/l4d2/cim_riot 
+
+512  models/props_unique/zombiebreakwallbrick01
+512  models/props_debris/woodset01
+512  models/props_vehicles/tractor
+256  concrete/street_overlay_noparking
+256  concrete/street_overlay_crossing
+256  decals/ghostsign_00
+128  models/props_critters/seagull_group
+512  models/props_urban/gates001
+256  models/props_urban/telephone_pole_addons001
+256  models/props_signs/pole_horizontal_01
+256  models/props_urban/flood_light001
+256  models/props_urban/porch_light001
+256  models/props_urban/porch_light002
+256  models/props_wasteland/light_spotlight01b
+256  models/props_urban/chimneys001
+256  models/props_downtown/windows_interior
+256  models/props_street/trafficlight01_main
+128  models/props_downtown/balcony_underside
+256  models/props_downtown/dormers
+256  models/props_rooftop/acunit01
+256  models/props_rooftop/acvent04
+256  models/props_rooftop/acvent02
+256  models/props_rooftop/rooftopcluster06a
+256  models/props_urban/fire_escape
+256  models/props_street/trimpiece02
+512  models/props_equipment/firepipe02

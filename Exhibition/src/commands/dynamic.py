@@ -224,84 +224,165 @@ Rules:
             "parameters": []
         }
     
-    async def _register_universal_command(
-        self, 
-        interaction: discord.Interaction, 
-        metadata: Dict[str, Any],
-        original_request: str
-    ):
-        """Universal 커맨드 등록 - 수정된 버전"""
+async def _register_universal_command(self, interaction, metadata: Dict):
+    """개선된 Universal 커맨드 등록 - 안전한 세션 관리"""
+    try:
+        command_id = None
+        
+        # 1단계: 안전한 데이터베이스 커맨드 생성
         try:
-            # 필수 매개변수 준비
-            guild_id = str(interaction.guild.id)
-            name = metadata['name']
-            description = metadata['description']
-            response_template = metadata['response_template']
-            created_by = interaction.user.id
-            use_ai = metadata.get('use_ai', False)
-            
-            # 커맨드 생성 - 반환값에서 필요한 정보만 추출
-            command = await command_service.create_command(
-                guild_id=guild_id,
-                name=name,
-                description=description,
-                response_template=response_template,
-                created_by=created_by,
-                use_ai=use_ai
-            )
-            
-            # 세션 범위 내에서 필요한 정보 추출
-            command_id = command.id
-            command_name = command.name
-            command_created_at = command.created_at
-            
-            # Discord 슬래시 커맨드 등록
-            async def dynamic_command_callback(cmd_interaction: discord.Interaction):
-                """동적 생성된 커맨드 콜백"""
-                try:
-                    if use_ai:
-                        ai_service = AIService()
-                        enhanced_response = await ai_service.enhance_response(
-                            response_template,
-                            f"User: {cmd_interaction.user.name}",
-                            {"request": original_request}
-                        )
-                        await cmd_interaction.response.send_message(enhanced_response)
-                    else:
-                        await cmd_interaction.response.send_message(response_template)
-                        
-                except Exception as e:
-                    logger.error(f"동적 커맨드 실행 실패: {e}")
-                    await cmd_interaction.response.send_message(
-                        "❌ 커맨드 실행 중 오류가 발생했습니다.",
+            with command_service.get_db_session() as db:
+                # 중복 확인
+                existing = db.query(Command).filter(
+                    Command.guild_id == str(interaction.guild_id),
+                    Command.name == metadata["name"]
+                ).first()
+                
+                if existing:
+                    await interaction.followup.send(
+                        f"❌ 커맨드 `{metadata['name']}`이 이미 존재합니다!", 
                         ephemeral=True
                     )
-            
-            # 슬래시 커맨드 생성 및 등록
-            slash_command = app_commands.Command(
-                name=name,
-                description=description,
-                callback=dynamic_command_callback
-            )
-            
-            # 봇 트리에 추가
-            interaction.client.tree.add_command(slash_command, guild=interaction.guild)
-            
-            # 즉시 동기화
-            await interaction.client.tree.sync(guild=interaction.guild)
-            
-            logger.info(f"Universal 커맨드 '{command_name}' 등록 완료 (ID: {command_id})")
-            
-            # 세션과 독립적인 결과 객체 반환
-            return type('CommandResult', (), {
-                'id': command_id,
-                'name': command_name,
-                'created_at': command_created_at
-            })()
-            
+                    return None
+                
+                # 새 커맨드 생성
+                new_command = Command(
+                    guild_id=str(interaction.guild_id),
+                    name=metadata["name"],
+                    description=metadata["description"],
+                    response_template=metadata["response_template"],
+                    use_ai=metadata.get("use_ai", False),
+                    created_by=str(interaction.user.id)
+                )
+                
+                db.add(new_command)
+                db.flush()  # ID 생성
+                command_id = new_command.id  # ID 저장
+                
+                logger.info(f"MySQL: 명령어 생성 성공 - {metadata['name']} (Guild: {interaction.guild_id}, ID: {command_id})")
+                
         except Exception as e:
-            logger.error(f"Universal 커맨드 등록 실패: {e}")
-            raise
+            logger.error(f"Universal 커맨드 DB 생성 실패: {e}")
+            await interaction.followup.send(
+                f"❌ 데이터베이스 오류: {str(e)}", 
+                ephemeral=True
+            )
+            return None
+        
+        # 2단계: 새로운 세션에서 커맨드 조회 및 Discord 등록
+        try:
+            with command_service.get_db_session() as db:
+                # 새로운 세션에서 커맨드 조회
+                command = db.query(Command).filter(Command.id == command_id).first()
+                
+                if not command:
+                    logger.error(f"생성된 커맨드를 찾을 수 없음: ID {command_id}")
+                    return None
+                
+                # Discord 커맨드 등록
+                @app_commands.command(
+                    name=command.name,
+                    description=command.description
+                )
+                async def universal_dynamic_command(cmd_interaction: discord.Interaction):
+                    """동적 생성된 Universal 커맨드"""
+                    try:
+                        # 3단계: 실행 시 안전한 세션으로 커맨드 조회
+                        with command_service.get_db_session() as exec_db:
+                            exec_command = exec_db.query(Command).filter(
+                                Command.id == command_id
+                            ).first()
+                            
+                            if not exec_command:
+                                await cmd_interaction.response.send_message(
+                                    "❌ 커맨드를 찾을 수 없습니다.", 
+                                    ephemeral=True
+                                )
+                                return
+                            
+                            # 사용 횟수 증가
+                            command_service._increment_usage_async(exec_command.id)
+                            
+                            # AI 응답 생성 또는 템플릿 사용
+                            if exec_command.use_ai and exec_command.response_template:
+                                from src.services.ai_service import ai_service
+                                enhanced_response = await ai_service.enhance_response(
+                                    exec_command.response_template,
+                                    f"사용자가 {exec_command.name} 커맨드를 실행했습니다.",
+                                    {
+                                        "user": cmd_interaction.user.display_name,
+                                        "guild": cmd_interaction.guild.name if cmd_interaction.guild else "DM"
+                                    }
+                                )
+                                await cmd_interaction.response.send_message(enhanced_response)
+                            else:
+                                # 기본 템플릿 응답
+                                response = exec_command.response_template or f"{exec_command.name} 커맨드가 실행되었습니다!"
+                                await cmd_interaction.response.send_message(response)
+                    
+                    except Exception as e:
+                        logger.error(f"Universal 커맨드 실행 실패 {command.name}: {e}")
+                        if not cmd_interaction.response.is_done():
+                            await cmd_interaction.response.send_message(
+                                "❌ 커맨드 실행 중 오류가 발생했습니다.", 
+                                ephemeral=True
+                            )
+                
+                # 동적 커맨드를 봇의 커맨드 트리에 추가
+                guild_obj = interaction.client.get_guild(interaction.guild_id)
+                if guild_obj:
+                    interaction.client.tree.add_command(universal_dynamic_command, guild=guild_obj)
+                    
+                    # 커맨드 트리 동기화
+                    try:
+                        await interaction.client.tree.sync(guild=guild_obj)
+                        logger.info(f"Universal 커맨드 Discord 등록 성공: {command.name}")
+                    except Exception as sync_error:
+                        logger.error(f"커맨드 동기화 실패: {sync_error}")
+                        # 동기화 실패 시 DB에서 커맨드 제거
+                        command.is_active = False
+                        return None
+                
+                # 성공 메시지
+                embed = discord.Embed(
+                    title="✅ Universal 커맨드 생성 완료",
+                    description=f"**/{command.name}** 커맨드가 성공적으로 생성되었습니다!",
+                    color=discord.Color.green()
+                )
+                embed.add_field(name="설명", value=command.description, inline=False)
+                embed.add_field(name="AI 기능", value="✅ 활성화" if command.use_ai else "❌ 비활성화", inline=True)
+                embed.add_field(name="생성자", value=f"<@{command.created_by}>", inline=True)
+                
+                await interaction.followup.send(embed=embed)
+                
+                return command
+                
+        except Exception as e:
+            logger.error(f"Universal 커맨드 Discord 등록 실패: {e}")
+            
+            # Discord 등록 실패 시 DB에서 생성된 커맨드 비활성화
+            try:
+                with command_service.get_db_session() as cleanup_db:
+                    cleanup_command = cleanup_db.query(Command).filter(Command.id == command_id).first()
+                    if cleanup_command:
+                        cleanup_command.is_active = False
+                        logger.info(f"실패한 커맨드 비활성화: {command_id}")
+            except Exception as cleanup_error:
+                logger.error(f"정리 작업 실패: {cleanup_error}")
+            
+            await interaction.followup.send(
+                f"❌ Discord 커맨드 등록 실패: {str(e)}", 
+                ephemeral=True
+            )
+            return None
+    
+    except Exception as e:
+        logger.error(f"Universal 커맨드 생성 실패: {e}")
+        await interaction.followup.send(
+            f"❌ 커맨드 생성 중 오류가 발생했습니다: {str(e)}", 
+            ephemeral=True
+        )
+        return None
     
     async def _send_generation_report(
         self, 
